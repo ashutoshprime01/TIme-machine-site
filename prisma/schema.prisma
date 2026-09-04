@@ -1,0 +1,107 @@
+// Internet Time Machine — data model (plan §28)
+// Dev default is SQLite for zero-setup. To move to PostgreSQL (plan §4),
+// change the datasource provider and DATABASE_URL, then `npx prisma db push`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Entity {
+  id             String     @id @default(cuid())
+  domain         String     @unique
+  name           String?
+  firstCaptureAt String? // CDX timestamp YYYYMMDDhhmmss
+  lastCaptureAt  String? // CDX timestamp YYYYMMDDhhmmss
+  createdAt      DateTime   @default(now())
+  snapshots      Snapshot[]
+}
+
+model Snapshot {
+  id          String    @id @default(cuid())
+  entity      Entity    @relation(fields: [entityId], references: [id])
+  entityId    String
+  timestamp   String // CDX timestamp YYYYMMDDhhmmss
+  archiveUrl  String // replay URL on the provider
+  originalUrl String
+  source      String    @default("wayback")
+  contentHash String // SHA-256 of retrieved HTML (plan §30)
+  createdAt   DateTime  @default(now())
+  analysis    Analysis?
+
+  @@unique([entityId, timestamp])
+  @@index([entityId, timestamp])
+}
+
+model Analysis {
+  id               String   @id @default(cuid())
+  snapshot         Snapshot @relation(fields: [snapshotId], references: [id])
+  snapshotId       String   @unique
+  // content metrics (plan §13)
+  wordCount        Int
+  paragraphCount   Int
+  headingCount     Int
+  linkCount        Int
+  imageCount       Int
+  videoCount       Int
+  formCount        Int
+  // structure metrics
+  domNodes         Int
+  domDepth         Int
+  tableCount       Int
+  listCount        Int
+  navRegions       Int
+  navLinks         Int
+  // design metrics
+  distinctColors   Int
+  pageSizeBytes    Int
+  title            String?
+  // text signal hits (plan §16): commerce / social / personal / AI wording
+  textCommerce     Int      @default(0)
+  textSocial       Int      @default(0)
+  textPersonal     Int      @default(0)
+  textAi           Int      @default(0)
+  // technology signals: JSON array of {name, category, confidence, evidence}
+  techSignals      String
+  algorithmVersion String
+  createdAt        DateTime @default(now())
+  dna              Dna?
+
+  @@index([snapshotId])
+}
+
+model Dna {
+  id                   String   @id @default(cuid())
+  analysis             Analysis @relation(fields: [analysisId], references: [id])
+  analysisId           String   @unique
+  minimalism           Int
+  informationDensity   Int
+  visualComplexity     Int
+  socialIntensity      Int
+  commercialization    Int
+  personalization      Int
+  mobileFocus          Int
+  interactivity        Int
+  mediaIntensity       Int
+  aiIntegration        Int
+  accessibilitySignals Int
+  navigationComplexity Int
+  algorithmVersion     String
+
+  @@index([analysisId])
+}
+
+model Share {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  domain     String
+  timestampA String
+  timestampB String
+  createdAt  DateTime @default(now())
+
+  @@index([slug])
+}
