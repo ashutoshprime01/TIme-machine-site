@@ -116,3 +116,95 @@ export const DNA_LABELS: Record<keyof DnaDimensions, string> = {
 
 export const DNA_VERSION = "1.0";
 export const ANALYSIS_VERSION = "1.0";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Identity History (ITM 2.0) — public-web archaeology types.
+// A trace is one publicly discoverable artifact; an identity is a *candidate
+// group* of traces, never an asserted person.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Categories of public traces (master prompt timeline categories). */
+export type IdentityTraceType =
+  | "PROFILE"
+  | "WEBSITE"
+  | "DOMAIN"
+  | "MENTION"
+  | "PROJECT"
+  | "POST"
+  | "IMAGE"
+  | "USERNAME";
+
+/** Epistemic confidence for every identity claim. UNVERIFIED = no evidence. */
+export type ConfidenceLevel = "HIGH" | "MEDIUM" | "LOW" | "UNVERIFIED";
+
+/** What the evidence actually is — inspectable by the user. */
+export interface EvidenceBundle {
+  /** Short label, e.g. "USERNAME MATCH" or "ARCHIVED PROFILE PAGE". */
+  label: string;
+  /** Human sentence describing what was directly observed. */
+  reason: string;
+  /** Public URL where the evidence can be inspected. */
+  url: string;
+  /** When the evidence was observed / the page was captured (ISO-ish or CDX). */
+  date: string;
+  /** Named scoring signals that fired, e.g. "exact-username-match +2". */
+  signals: string[];
+}
+
+/** One grouped public trace as delivered to the UI. */
+export interface IdentityTraceItem {
+  id: string;
+  type: IdentityTraceType;
+  title: string;
+  url: string;
+  /** Live public URL when one exists (else the replay URL). */
+  liveUrl?: string;
+  source: string;
+  /** CDX timestamp YYYYMMDDhhmmss */
+  observedAt: string;
+  confidence: ConfidenceLevel;
+  evidence: EvidenceBundle;
+  /** Domain this trace connects to, for Website History cross-links. */
+  domain?: string;
+}
+
+/** Confidence evaluation with inspectable methodology. */
+export interface ConfidenceAssessment {
+  score: number;
+  level: ConfidenceLevel;
+  /** Each signal that fired, with its weight — shown to users. */
+  breakdown: { signal: string; weight: number }[];
+}
+
+/** Full result of an identity search, ready for the UI. */
+export interface IdentityReport {
+  key: string;
+  displayName: string;
+  kind: "username" | "name" | "domain";
+  /** What the user originally typed. */
+  query: string;
+  firstObservedAt: string | null;
+  lastObservedAt: string | null;
+  traces: IdentityTraceItem[];
+  aliases: {
+    alias: string;
+    type: "username" | "name" | "domain";
+    firstSeen: string | null;
+    lastSeen: string | null;
+    source: string;
+    confidence: ConfidenceLevel;
+  }[];
+  /** Cross-trace relationships (evidence-backed links, never identity claims). */
+  relationships: {
+    sourceTitle: string;
+    targetTitle: string;
+    type: string;
+    confidence: ConfidenceLevel;
+    reason: string;
+  }[];
+  confidence: ConfidenceAssessment;
+  /** Sources that were queried but returned nothing (honesty). */
+  sourcesQueried: string[];
+}
+
+export const IDENTITY_CONFIDENCE_VERSION = "1.0";

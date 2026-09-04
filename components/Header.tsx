@@ -21,6 +21,7 @@ export function Header() {
           {[
             { href: "/explore", label: "Discover" },
             { href: "/history", label: "Web History" },
+            { href: "/identity", label: "Identity History" },
             { href: "/about", label: "Methodology" },
           ].map((item) => (
             <Link

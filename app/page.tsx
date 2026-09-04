@@ -5,6 +5,7 @@ import { HeroShell } from "@/components/landing/HeroShell";
 import { HeroEyebrow } from "@/components/landing/HeroEyebrow";
 import { Pipeline } from "@/components/landing/Pipeline";
 import { DestinationCards } from "@/components/landing/DestinationCards";
+import { IdentityIntro } from "@/components/landing/IdentityIntro";
 import { EraGallery } from "@/components/landing/EraGallery";
 import { YearRail } from "@/components/landing/YearRail";
 import { EraCompare } from "@/components/landing/EraCompare";
@@ -80,8 +81,8 @@ export default function HomePage() {
               <span className="text-shimmer">the Internet.</span>
             </h1>
             <p className="animate-fade-up mx-auto mt-6 max-w-xl text-base sm:text-lg text-mist">
-              Search any website, choose a moment in time, and explore how its
-              design, content, technology and behavior evolved — year by year.
+              Explore how websites, identities, ideas and technologies evolved
+              through time.
             </p>
 
             <div className="animate-fade-up mt-12">
@@ -135,11 +136,32 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 03 — The Gallery: eras as a specimen list */}
+      {/* 03 — Identity History (ITM 2.0): "Your Internet has a
+          history too." */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
         <Reveal>
           <SectionHeading
-            eyebrow="03 — The Gallery"
+            eyebrow="03 — Identity History"
+            title={
+              <>
+                Not just websites —{" "}
+                <span className="font-light italic text-fog/80">the people behind them</span>
+              </>
+            }
+          />
+        </Reveal>
+        <Reveal delay={0.1} className="mt-10">
+          <IdentityIntro />
+        </Reveal>
+      </section>
+
+      <Hairline />
+
+      {/* 04 — The Gallery: eras as a specimen list */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="04 — The Gallery"
             title={
               <>
                 A field guide to{" "}
@@ -154,11 +176,11 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 04 — The Timeline itself, as an exhibit */}
+      {/* 05 — The Timeline itself, as an exhibit */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
         <Reveal>
           <SectionHeading
-            eyebrow="04 — The Timeline"
+            eyebrow="05 — The Timeline"
             title={
               <>
                 Thirty-five years,{" "}
@@ -175,11 +197,11 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 05 — The Exhibit Hall: then & now slider + the reel */}
+      {/* 06 — The Exhibit Hall: then & now slider + the reel */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
         <Reveal>
           <SectionHeading
-            eyebrow="05 — The Exhibit Hall"
+            eyebrow="06 — The Exhibit Hall"
             title={
               <>
                 Then &amp; now,{" "}
@@ -197,11 +219,11 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 06 — Internet DNA */}
+      {/* 07 — Internet DNA */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
         <Reveal>
           <SectionHeading
-            eyebrow="06 — Internet DNA"
+            eyebrow="07 — Internet DNA"
             title={
               <>
                 Every era has{" "}
@@ -218,10 +240,10 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 07 — The Idea: word-by-word manifesto */}
+      {/* 08 — The Idea: word-by-word manifesto */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
         <Reveal>
-          <SectionHeading eyebrow="07 — The Idea" title="Why we built this" />
+          <SectionHeading eyebrow="08 — The Idea" title="Why we built this" />
         </Reveal>
         <div className="mt-10">
           <Manifesto />
@@ -230,7 +252,7 @@ export default function HomePage() {
 
       <Hairline />
 
-      {/* 08 — The Honesty Rule (plan §77) */}
+      {/* 09 — The Honesty Rule (plan §77) */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
         <Reveal className="glass rounded-2xl p-6 sm:p-10 relative overflow-hidden">
           <div
@@ -239,7 +261,7 @@ export default function HomePage() {
           />
           <div className="relative">
             <SectionHeading
-              eyebrow="08 — The Honesty Rule"
+              eyebrow="09 — The Honesty Rule"
               title={
                 <>
                   Facts, inferences, and hypotheses —{" "}

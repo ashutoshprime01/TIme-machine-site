@@ -51,9 +51,31 @@ const SECTIONS = [
     ],
   },
   {
+    h: "Identity History: how sources are discovered",
+    p: [
+      "Identity History reconstructs publicly discoverable traces for a name, handle, alias or domain. Only public, permit-free sources are queried: the Internet Archive's CDX index (checking whether public profile URL shapes like github.com/<handle> were ever archived) and GitHub's documented public API. The platform list is an explicit allowlist in code — platforms without public profile pages are never probed, and nothing behind a login is ever accessed.",
+      "Free text retrieved from public pages passes a scrubbing filter that removes email addresses, phone-like numbers and credential-shaped strings before anything is stored or displayed.",
+    ],
+  },
+  {
+    h: "Identity evidence & confidence scoring",
+    p: [
+      "Every discovered trace carries its type, title, URL, source, observation date, an evidence note, and a confidence grade: HIGH (directly observed public artifact), MEDIUM (read from a public page's own fields), LOW (label match without a verified link), or UNVERIFIED (no evidence).",
+      "Grouping traces under one search uses a published heuristic — not proof: exact username match +2, same linked website +3, same public profile referenced independently +2, consistent timeline +1, conflicting information −3. Totals map to LOW (0–2), MEDIUM (3–4) and HIGH (5+). The breakdown of which signals fired is shown on every identity page.",
+      "The core rule: a username appearing on two platforms links those public pages — it never claims the accounts belong to the same person. Domains are described as 'publicly associated with' an identity, never 'owned by', unless ownership is actually verified.",
+    ],
+  },
+  {
+    h: "Identity History: limits & removal",
+    p: [
+      "This is public-web archaeology, not private-person investigation. Archived coverage is spotty — a handle with no archived profile pages will honestly return 'no publicly discoverable traces found'. Mentions require full-text search across archives, which the current sources cannot provide; the empty state says so rather than inventing results.",
+      "Any public result can be reported or removed: the report page explains what is stored, how to request deletion from this system (no justification required), and how to request removal at the original public source.",
+    ],
+  },
+  {
     h: "Roadmap",
     p: [
-      "Built so far: search, entity timelines, the historical viewer, comparisons, deterministic analysis, Internet DNA and shareable links. Next: evolution events and scores, then the Evolution Lab (hypothetical branches, clearly labeled), then future scenarios — each growing from evidence into interpretation, and only then into imagination.",
+      "Built so far: search, entity timelines, the historical viewer, comparisons, deterministic analysis, Internet DNA, shareable links, and Identity History — public-trace discovery with evidence, confidence and cross-links into Website History. Next: the interactive identity constellation graph, then evolution events and scores, then the Evolution Lab (hypothetical branches, clearly labeled), then future scenarios — each growing from evidence into interpretation, and only then into imagination.",
     ],
   },
 ];

@@ -137,3 +137,80 @@ model Share {
 
   @@index([slug])
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Identity History (ITM 2.0). A candidate identity group — NEVER "a person."
+// Every claim stored here is hedged evidence, never a definitive attribution
+// (master prompt: "Never claim that two accounts belong to the same person
+// merely because the name or username matches").
+// ─────────────────────────────────────────────────────────────────────────────
+
+model Identity {
+  id              String          @id @default(cuid())
+  key             String          @unique // normalized: "johnsmith" | "johnsmith.dev"
+  displayName     String
+  kind            String // username | name | domain — what the user searched
+  firstObservedAt String? // CDX timestamp YYYYMMDDhhmmss
+  lastObservedAt  String? // CDX timestamp YYYYMMDDhhmmss
+  createdAt       DateTime        @default(now())
+  aliases         IdentityAlias[]
+  traces          IdentityTrace[]
+
+  @@index([kind])
+}
+
+// A public alias (username, name form, or domain) seen in public evidence.
+model IdentityAlias {
+  id         String   @id @default(cuid())
+  identity   Identity @relation(fields: [identityId], references: [id])
+  identityId String
+  alias      String
+  type       String // username | name | domain
+  firstSeen  String? // CDX timestamp of earliest supporting trace
+  lastSeen   String? // CDX timestamp of latest supporting trace
+  source     String // where the alias was observed
+  createdAt  DateTime @default(now())
+
+  @@unique([identityId, alias, type])
+  @@index([identityId])
+}
+
+// One publicly discoverable Internet trace (master prompt field list:
+// id, identityId, type, title, url, source, observedAt, confidence, evidence).
+model IdentityTrace {
+  id         String   @id @default(cuid())
+  identity   Identity @relation(fields: [identityId], references: [id])
+  identityId String
+  type       String // PROFILE | WEBSITE | DOMAIN | MENTION | PROJECT | POST | IMAGE | USERNAME
+  title      String
+  url        String // public URL of the trace (live or replay)
+  source     String // platform / archive that surfaced it
+  observedAt String // CDX timestamp YYYYMMDDhhmmss when first publicly visible
+  confidence String // HIGH | MEDIUM | LOW | UNVERIFIED
+  evidence   String // JSON EvidenceBundle: {source, url, date, reason, signals[]}
+  createdAt  DateTime @default(now())
+
+  sourcesOut IdentityRelationship[] @relation("source")
+  targetsIn  IdentityRelationship[] @relation("target")
+
+  @@unique([identityId, url, type])
+  @@index([identityId, observedAt])
+}
+
+// An evidence-backed link between two traces (e.g. a GitHub profile that
+// lists a personal website). Never an asserted same-person claim.
+model IdentityRelationship {
+  id              String         @id @default(cuid())
+  source          IdentityTrace  @relation("source", fields: [sourceTraceId], references: [id])
+  sourceTraceId   String
+  target          IdentityTrace  @relation("target", fields: [targetTraceId], references: [id])
+  targetTraceId   String
+  relationshipType String // links-to | mentions | same-username | archived-by
+  confidence      String // HIGH | MEDIUM | LOW
+  evidence        String // JSON EvidenceBundle
+  reason          String
+  createdAt       DateTime @default(now())
+
+  @@index([sourceTraceId])
+  @@index([targetTraceId])
+}

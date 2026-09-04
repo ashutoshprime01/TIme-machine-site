@@ -44,6 +44,30 @@ async function latestDna(domain: string): Promise<DnaProfile | null> {
   }
 }
 
+/**
+ * Cross-mode bridge (ITM 2.0): if any stored identity trace connects a
+ * public identity to this domain, surface a link back to Identity History.
+ * Evidence-backed only — nothing is inferred from the domain's name.
+ */
+async function identityReference(domain: string): Promise<{ key: string; display: string } | null> {
+  try {
+    // Only WEBSITE/DOMAIN traces connect an identity to a domain — a
+    // profile page hosted on a platform (e.g. github.com/<handle>) is not
+    // a connection to that platform's domain.
+    const trace = await prisma.identityTrace.findFirst({
+      where: {
+        type: { in: ["WEBSITE", "DOMAIN"] },
+        url: { contains: domain },
+      },
+      include: { identity: true },
+    });
+    if (!trace) return null;
+    return { key: trace.identity.key, display: trace.identity.displayName };
+  } catch {
+    return null;
+  }
+}
+
 async function EntityBody({ domain }: { domain: string }) {
   let summary;
   try {
@@ -149,6 +173,8 @@ export default async function EntityPage({
       <Suspense fallback={<TimelineSkeleton />}>
         <EntityBody domain={domain} />
       </Suspense>
+      {/* cross-mode bridge: public identity traces reference this domain */}
+      <IdentityBridge domain={domain} />
       {/* classic timeline below the OS for accessibility & deep links */}
       <section aria-labelledby="timeline-heading" className="mt-10">
         <p className="eyebrow">Full timeline</p>
@@ -158,6 +184,27 @@ export default async function EntityPage({
         <ClassicTimeline domain={domain} />
       </section>
     </div>
+  );
+}
+
+/** Renders the Identity History back-link when evidence connects one. */
+async function IdentityBridge({ domain }: { domain: string }) {
+  const ref = await identityReference(domain);
+  if (!ref) return null;
+  return (
+    <aside className="mt-8 rounded-xl border border-amber-bright/25 bg-amber-bright/5 px-4 py-3">
+      <Link
+        href={`/identity/${encodeURIComponent(ref.key)}`}
+        className="group flex flex-wrap items-baseline gap-x-3 gap-y-1"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-bright/90">
+          Identity History →
+        </span>
+        <span className="text-sm text-mist group-hover:text-fog transition-colors">
+          Public identity traces reference this domain ({ref.display})
+        </span>
+      </Link>
+    </aside>
   );
 }
 

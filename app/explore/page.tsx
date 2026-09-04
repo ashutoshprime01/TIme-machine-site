@@ -61,12 +61,22 @@ export default async function ExplorePage() {
     take: 6,
   });
 
+  // Identities with rich public histories — ranked by stored trace count
+  // (ITM 2.0). Real stored data only; the section hides itself until
+  // identities exist.
+  const richIdentities = await prisma.identity.findMany({
+    orderBy: { traces: { _count: "desc" } },
+    take: 6,
+    include: { _count: { select: { traces: true } } },
+  });
+
   const hasAny =
     oldest.length > 0 ||
     minimal.length > 0 ||
     dramatic.length > 0 ||
     recentShares.length > 0 ||
-    recentExperiments.length > 0;
+    recentExperiments.length > 0 ||
+    richIdentities.length > 0;
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 space-y-12">
@@ -183,6 +193,40 @@ export default async function ExplorePage() {
                     </div>
                     <span className="text-xs text-faint tabular-nums">minimalism {d.minimalism}/100</span>
                   </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Identities with rich public histories (ITM 2.0) */}
+      {richIdentities.length > 0 && (
+        <section aria-labelledby="identities-heading">
+          <h2 id="identities-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
+            Identities with rich public histories
+          </h2>
+          <p className="mt-1 text-xs text-faint">
+            Ranked by number of stored public traces.{" "}
+            <span className="font-semibold text-mist">FACT</span> — counted from
+            stored evidence, and never a claim about any person.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {richIdentities.map((identity) => (
+              <li key={identity.id}>
+                <Link
+                  href={`/identity/${encodeURIComponent(identity.key)}`}
+                  className="block glass rounded-xl p-4 card-hover"
+                >
+                  <div className="font-semibold truncate">{identity.displayName}</div>
+                  <div className="mt-1 text-sm text-amber-bright tabular-nums">
+                    {identity._count.traces} public trace{identity._count.traces === 1 ? "" : "s"}
+                  </div>
+                  {identity.firstObservedAt && (
+                    <div className="mt-0.5 text-xs text-faint tabular-nums">
+                      first observed {identity.firstObservedAt.slice(0, 4)}
+                    </div>
+                  )}
                 </Link>
               </li>
             ))}

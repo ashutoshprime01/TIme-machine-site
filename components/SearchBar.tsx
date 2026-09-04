@@ -3,13 +3,18 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent } from "react";
 
+export type SearchMode = "web" | "identity";
+
 export function SearchBar({
   initialValue = "",
   size = "large",
+  mode = "web",
   onTravel,
 }: {
   initialValue?: string;
   size?: "large" | "compact";
+  /** web → /search dispatch (websites); identity → /identity/<query>. */
+  mode?: SearchMode;
   /** When provided, submit is handed to the parent (e.g. the hero's
       time-travel portal) instead of navigating directly. */
   onTravel?: (query: string) => void;
@@ -28,7 +33,11 @@ export function SearchBar({
       onTravel(q);
       return;
     }
-    startTransition(() => router.push(`/search?q=${encodeURIComponent(q)}`));
+    const dest =
+      mode === "identity"
+        ? `/identity/${encodeURIComponent(q)}`
+        : `/search?q=${encodeURIComponent(q)}`;
+    startTransition(() => router.push(dest));
   }
 
   const large = size === "large";
@@ -40,7 +49,7 @@ export function SearchBar({
       className={`flex w-full gap-2 ${large ? "max-w-2xl mx-auto" : "max-w-md"}`}
     >
       <label htmlFor="site-search" className="sr-only">
-        Search a website, company, product, or URL
+        Search a website, username, person, domain or public identity
       </label>
       <div
         className={`group relative flex-1 rounded-xl border border-white/15 bg-ink/70 backdrop-blur-xl transition-all duration-300 focus-within:border-amber-bright/60 focus-within:bg-ink/85 focus-within:shadow-[0_0_0_1px_rgba(232,180,90,0.35),0_0_44px_-8px_rgba(232,180,90,0.45)] ${
@@ -51,14 +60,14 @@ export function SearchBar({
           aria-hidden="true"
           className="pointer-events-none absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 font-mono text-faint text-sm tracking-wider group-focus-within:text-amber-bright transition-colors"
         >
-          ⇢
+          {mode === "identity" ? "@" : "⇢"}
         </span>
         <input
           id="site-search"
           type="search"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Search a website, company, product, or URL…"
+          placeholder="Search a website, username, person, domain or public identity…"
           autoComplete="off"
           spellCheck={false}
           className={`w-full bg-transparent text-fog placeholder:text-faint outline-none ${

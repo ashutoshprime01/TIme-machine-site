@@ -16,6 +16,8 @@ import { logger } from "@/lib/logger";
 const CDX_ENDPOINT = "https://web.archive.org/cdx/search/cdx";
 const REPLAY_BASE = "https://web.archive.org/web";
 
+export { CDX_ENDPOINT, REPLAY_BASE };
+
 /** Politeness limits: at most 3 concurrent requests, spaced ≥ 500 ms. */
 const MAX_CONCURRENT = 3;
 const MIN_START_GAP_MS = 500;
@@ -51,7 +53,7 @@ function releaseSlot(): void {
   waiters.shift()?.();
 }
 
-async function throttled<T>(fn: () => Promise<T>): Promise<T> {
+export async function throttled<T>(fn: () => Promise<T>): Promise<T> {
   await acquireSlot();
   try {
     return await fn();
@@ -60,9 +62,13 @@ async function throttled<T>(fn: () => Promise<T>): Promise<T> {
   }
 }
 
-async function fetchWithRetry(url: string, timeoutMs: number): Promise<Response> {
+export async function fetchWithRetry(
+  url: string,
+  timeoutMs: number,
+  maxRetries: number = MAX_RETRIES
+): Promise<Response> {
   let lastError: unknown;
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     if (attempt > 0) {
       await sleep(1500 * Math.pow(2, attempt)); // 3s, 6s backoff
       logger.warn("wayback: retrying request", { url, attempt });
