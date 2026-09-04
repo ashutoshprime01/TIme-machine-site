@@ -77,6 +77,46 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
+/* Film grain — full-viewport archival texture (feTurbulence tile)     */
+/* ------------------------------------------------------------------ */
+
+.grain {
+  position: fixed;
+  inset: -100%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  animation: grain-jitter 0.9s steps(3) infinite;
+}
+
+/* the jitter never slides — film jumps frame to frame */
+@keyframes grain-jitter {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1.5%, 1%); }
+  40% { transform: translate(1%, -1.5%); }
+  60% { transform: translate(-1%, -1%); }
+  80% { transform: translate(1.5%, 1.5%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom cursor (fine pointers, non-reduced motion) — the page adds   */
+/* .cursor-hidden to <html> when the custom cursor is active           */
+/* ------------------------------------------------------------------ */
+
+@media (pointer: fine) {
+  html.cursor-hidden,
+  html.cursor-hidden * {
+    cursor: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Surfaces — glass panels, hairlines                                  */
 /* ------------------------------------------------------------------ */
 
@@ -305,6 +345,39 @@ body {
   }
   to {
     transform: translateX(-50%);
+  }
+}
+
+/* Arsenal wall — huge outlined words, slower drift than the ticker */
+@keyframes marquee-slow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-slow {
+  animation: marquee-slow 30s linear infinite;
+}
+
+.text-stroke-word {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 244, 250, 0.28);
+}
+
+.text-stroke-word:hover {
+  color: var(--color-fog);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-slow {
+    animation: none;
+  }
+  .text-stroke-word {
+    color: var(--color-faint);
+    -webkit-text-stroke: 0;
   }
 }
 
