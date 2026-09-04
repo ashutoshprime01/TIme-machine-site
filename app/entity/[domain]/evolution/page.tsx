@@ -306,6 +306,13 @@ export default async function EvolutionPage({
         >
           ← Timeline
         </Link>
+        <span className="ml-3 text-faint" aria-hidden="true">·</span>
+        <Link
+          href={`/entity/${domain}/lab`}
+          className="mt-2 ml-2 inline-block text-sm text-amber-bright hover:underline"
+        >
+          Run a hypothetical transformation in the Evolution Lab →
+        </Link>
       </header>
       <Suspense fallback={<EvolutionSkeleton />}>
         <EvolutionBody domain={domain} />

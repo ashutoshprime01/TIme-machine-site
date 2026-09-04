@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { validateDomain, isCdxTimestamp } from "@/lib/security/url";
 import { rateLimit, clientIp } from "@/lib/rate-limit";
+import { getLabMode } from "@/lib/lab/engine";
 import { logger } from "@/lib/logger";
 
 function randomSuffix(): string {
@@ -26,7 +27,12 @@ export async function POST(request: Request) {
     );
   }
 
-  let body: { domain?: string; timestampA?: string; timestampB?: string };
+  let body: {
+    domain?: string;
+    timestampA?: string;
+    timestampB?: string;
+    mode?: string;
+  };
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -34,17 +40,29 @@ export async function POST(request: Request) {
   }
 
   const validation = validateDomain(body.domain ?? "");
-  if (
-    !validation.ok ||
-    !validation.domain ||
-    !isCdxTimestamp(body.timestampA ?? "") ||
-    !isCdxTimestamp(body.timestampB ?? "") ||
-    body.timestampA === body.timestampB
-  ) {
+  if (!validation.ok || !validation.domain || !isCdxTimestamp(body.timestampA ?? "")) {
+    return NextResponse.json({ error: "Invalid resource to share." }, { status: 400 });
+  }
+  const domain = validation.domain;
+
+  // Lab experiment share: a single timestamp + a valid lab mode.
+  if (body.mode) {
+    const mode = getLabMode(body.mode);
+    if (!mode) {
+      return NextResponse.json({ error: "Invalid resource to share." }, { status: 400 });
+    }
+    // The share page re-runs the deterministic transformation, so the shared
+    // URL needs only the source snapshot and mode.
+    return NextResponse.json(
+      { url: `/share/lab/${domain}/${body.timestampA}/${mode.id}` },
+      { status: 201 }
+    );
+  }
+
+  if (!isCdxTimestamp(body.timestampB ?? "") || body.timestampA === body.timestampB) {
     return NextResponse.json({ error: "Invalid comparison to share." }, { status: 400 });
   }
 
-  const domain = validation.domain;
   const timestampA = body.timestampA!;
   const timestampB = body.timestampB!;
 

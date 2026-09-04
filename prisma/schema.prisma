@@ -112,6 +112,21 @@ model TimelineEvent {
   @@index([entityId])
 }
 
+// Evolution Lab experiment (plan §28 Experiment). Everything stored here is
+// hypothetical output — isHypothetical is always true until local AI exists.
+model LabExperiment {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  domain       String
+  timestamp    String // CDX timestamp of the source snapshot
+  mode         String // lab engine mode id
+  result       String // JSON: LabResult (versioned)
+  isHypothetical Boolean @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([domain])
+}
+
 model Share {
   id         String   @id @default(cuid())
   slug       String   @unique
