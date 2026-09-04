@@ -566,3 +566,27 @@ body {
     cursor: default;
   }
 }
+
+/* Mobile (<lg): panels join the page flow — no absolute positioning,
+   no drag offsets, lighter blur to save mobile GPU/battery. */
+@media (max-width: 1023.98px) {
+  .hud-panel {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    max-width: none;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
+  .hud-title {
+    cursor: default;
+  }
+  .hud-drawer {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .hud-toggle {
+    padding: 0.5rem 0.9rem;
+  }
+}

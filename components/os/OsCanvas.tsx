@@ -257,6 +257,8 @@ function CameraRig() {
   const desired = useRef(new THREE.Vector3(0, 0, 8));
   const dragging = useRef(false);
   const lastPointer = useRef<{ x: number; y: number } | null>(null);
+  // pinch state: two active touch pointers
+  const pinchDist = useRef<number | null>(null);
 
   useEffect(() => {
     if (scrubYear !== null) {
@@ -266,13 +268,64 @@ function CameraRig() {
 
   useEffect(() => {
     const el = document.body;
+    const isHudTarget = (e: PointerEvent | WheelEvent) =>
+      !!(e.target as HTMLElement).closest(
+        ".hud-panel, .hud-drawer, input, select, button, a, label"
+      );
+
+    // track live touch pointers for pinch detection
+    const activeTouches = new Map<number, { x: number; y: number }>();
     const onDown = (e: PointerEvent) => {
       // don't steal drags from HUD panels
-      if ((e.target as HTMLElement).closest(".hud-panel, .hud-drawer, input, select, button, a, label")) return;
+      if (isHudTarget(e)) return;
+      if (e.pointerType === "touch") {
+        activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (activeTouches.size === 2) {
+          // two fingers → pinch: cancel single-finger pan
+          dragging.current = false;
+          lastPointer.current = null;
+          const [a, b] = [...activeTouches.values()];
+          pinchDist.current = Math.hypot(a.x - b.x, a.y - b.y);
+        } else if (activeTouches.size === 1) {
+          // first finger → pan (subject to touch-action allowing it)
+          dragging.current = true;
+          lastPointer.current = { x: e.clientX, y: e.clientY };
+        }
+        return;
+      }
       dragging.current = true;
       lastPointer.current = { x: e.clientX, y: e.clientY };
     };
     const onMove = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        if (!activeTouches.has(e.pointerId)) return;
+        activeTouches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (activeTouches.size === 2 && pinchDist.current !== null) {
+          // pinch-zoom: camera dolly, clamped
+          const [a, b] = [...activeTouches.values()];
+          const dist = Math.hypot(a.x - b.x, a.y - b.y);
+          const scale = pinchDist.current / Math.max(dist, 1);
+          desired.current.z = THREE.MathUtils.clamp(
+            desired.current.z * scale,
+            3,
+            26
+          );
+          pinchDist.current = dist;
+        } else if (activeTouches.size === 1 && dragging.current) {
+          // single-finger pan
+          const prev = lastPointer.current;
+          if (prev) {
+            desired.current.x -= (e.clientX - prev.x) * 0.02;
+            desired.current.y = THREE.MathUtils.clamp(
+              desired.current.y + (e.clientY - prev.y) * 0.012,
+              -1.5,
+              4
+            );
+          }
+          lastPointer.current = { x: e.clientX, y: e.clientY };
+        }
+        return;
+      }
       if (!dragging.current || !lastPointer.current) return;
       const dx = e.clientX - lastPointer.current.x;
       const dy = e.clientY - lastPointer.current.y;
@@ -284,7 +337,16 @@ function CameraRig() {
         4
       );
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        activeTouches.delete(e.pointerId);
+        if (activeTouches.size < 2) pinchDist.current = null;
+        if (activeTouches.size === 0) {
+          dragging.current = false;
+          lastPointer.current = null;
+        }
+        return;
+      }
       dragging.current = false;
       lastPointer.current = null;
     };

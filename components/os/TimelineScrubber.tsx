@@ -48,7 +48,7 @@ export function TimelineScrubber({
   const pct = scrubbed === null ? null : ((scrubbed - min) / span) * 100;
 
   return (
-    <div className="hud-panel w-[min(640px,calc(100vw-2rem))]">
+    <div className="hud-panel w-full lg:w-[min(640px,calc(100vw-2rem))]">
       <div className="hud-title">
         <span className="hud-dot hud-dot-fact" />
         <span>Timeline / {min}–{max}</span>
@@ -72,7 +72,7 @@ export function TimelineScrubber({
             if (e.key === "ArrowLeft") setYear(Math.max(min, (scrubbed ?? min) - 1));
             if (e.key === "ArrowRight") setYear(Math.min(max, (scrubbed ?? min) + 1));
           }}
-          className="relative h-10 cursor-ew-resize touch-none"
+          className="relative h-12 lg:h-10 cursor-ew-resize touch-none"
         >
           {/* axis */}
           <div className="absolute left-0 right-0 top-4 h-px bg-line" />
@@ -88,7 +88,7 @@ export function TimelineScrubber({
                 router.push(`/entity/${domain}?year=${y}`);
               }}
               title={`Travel to ${y}`}
-              className="absolute top-0 -translate-x-1/2 px-1.5 py-2"
+              className="absolute top-0 -translate-x-1/2 px-1.5 py-2.5 lg:py-2"
               style={{ left: `${((y - min) / span) * 100}%` }}
             >
               <span

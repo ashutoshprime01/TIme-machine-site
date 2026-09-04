@@ -22,7 +22,7 @@ export function DnaHudPanel({ dna }: { dna: DnaProfile }) {
       title="Internet DNA"
       epistemic="fact"
       initial={{ x: 24, y: 420 }}
-      bodyClassName="p-4 w-64"
+      bodyClassName="p-4 w-full lg:w-64"
     >
       <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.18em] text-faint">
         Profile v{dna.algorithmVersion} · 0–100

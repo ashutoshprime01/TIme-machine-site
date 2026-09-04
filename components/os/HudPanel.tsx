@@ -4,13 +4,28 @@
 // status dot, corner brackets. Mounts with a spring (scale 0.92 → 1,
 // y +24 → 0, opacity). The drag handle is the title bar — pointer
 // events on body content are untouched, so inputs and links keep
-// working inside the panel.
+// working inside the panel. Dragging is desktop-only: below lg (or on
+// coarse pointers) panels sit in the page flow and are not draggable,
+// so touch scrolling is never hijacked.
 
-import { useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useDragControls } from "framer-motion";
 import { reduceMotionPreference } from "./motion";
 
 const SPRING = { type: "spring", stiffness: 380, damping: 32, mass: 0.9 } as const;
+
+/** Desktop layout: wide screen + fine pointer (mouse/trackpad). */
+function useDesktopLayout(): boolean {
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px) and (pointer: fine)");
+    const apply = () => setIsDesktop(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  return isDesktop;
+}
 
 export function HudPanel({
   title,
@@ -32,17 +47,18 @@ export function HudPanel({
   const dragControls = useDragControls();
   const panelRef = useRef<HTMLDivElement>(null);
   const reduced = reduceMotionPreference();
+  const draggable = useDesktopLayout();
 
   return (
     <motion.div
       ref={panelRef}
       className={`hud-panel ${className}`}
-      style={{ left: initial.x, top: initial.y }}
+      style={draggable ? { left: initial.x, top: initial.y } : undefined}
       initial={reduced ? false : { opacity: 0, scale: 0.92, y: 24 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 12 }}
       transition={SPRING}
-      drag
+      drag={draggable}
       dragListener={false}
       dragControls={dragControls}
       dragMomentum={false}
@@ -64,12 +80,14 @@ export function HudPanel({
     >
       <div
         className="hud-title"
-        onPointerDown={(e) => dragControls.start(e)}
-        title="Drag to reposition"
+        onPointerDown={(e) => draggable && dragControls.start(e)}
+        title={draggable ? "Drag to reposition" : undefined}
       >
         <span className={`hud-dot ${epistemic === "fact" ? "hud-dot-fact" : "hud-dot-hypothesis"}`} />
         <span>{title}</span>
-        <span className="ml-auto text-faint tracking-normal normal-case">⠿</span>
+        <span className="ml-auto text-faint tracking-normal normal-case" aria-hidden="true">
+          {draggable ? "⠿" : "▤"}
+        </span>
       </div>
       <div className={bodyClassName}>{children}</div>
     </motion.div>
