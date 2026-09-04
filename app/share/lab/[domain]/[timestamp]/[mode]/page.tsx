@@ -23,7 +23,7 @@ async function LabSharedBody({
   const mode = getLabMode(modeId);
   if (!mode) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+      <div className="glass rounded-xl p-8 text-center">
         <p className="text-sm text-mist">This experiment link is invalid.</p>
       </div>
     );
@@ -35,7 +35,7 @@ async function LabSharedBody({
     (captures.length > 0 ? archive.nearestCapture(captures, timestamp) : null);
   if (!source) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+      <div className="glass rounded-xl p-8 text-center">
         <p className="text-sm text-mist">
           The source snapshot for this experiment is no longer in the archive.
         </p>
@@ -48,7 +48,7 @@ async function LabSharedBody({
     analysis = await analyzeCapture(domain, source.timestamp);
   } catch {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+      <div className="glass rounded-xl p-8 text-center">
         <p className="text-sm text-mist">
           We couldn&apos;t retrieve the source snapshot. Please try again in a moment.
         </p>
@@ -80,8 +80,8 @@ async function LabSharedBody({
           { label: "Transformation", value: mode.label },
           { label: "Result", value: "Hypothetical version" },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-line bg-panel px-4 py-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-faint">{s.label}</p>
+          <div key={s.label} className="glass rounded-xl px-4 py-3.5 card-hover">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">{s.label}</p>
             <p className="mt-1 text-sm font-semibold text-fog">
               {s.href ? (
                 <Link href={s.href} className="hover:text-amber-bright hover:underline">
@@ -95,7 +95,7 @@ async function LabSharedBody({
         ))}
       </div>
 
-      <section aria-labelledby="shared-dna-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
+      <section aria-labelledby="shared-dna-heading" className="glass rounded-xl p-5 sm:p-6">
         <h2 id="shared-dna-heading" className="text-lg font-semibold mb-4">
           Hypothetical Internet DNA
         </h2>
@@ -125,13 +125,13 @@ async function LabSharedBody({
       <div className="flex flex-wrap gap-3">
         <Link
           href={`/entity/${domain}/lab?t=${source.timestamp}`}
-          className="rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
+          className="btn-primary px-5 py-2.5 text-sm"
         >
           Open in the Evolution Lab
         </Link>
         <Link
           href={`/entity/${domain}`}
-          className="rounded-lg border border-line px-4 py-2.5 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2.5 text-sm font-semibold"
         >
           Explore {domain}&apos;s real timeline
         </Link>
@@ -178,14 +178,14 @@ export default async function SharedLabPage({
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-10">
       <header className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Shared experiment</p>
+        <p className="eyebrow eyebrow-accent">Shared experiment</p>
         <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
           {domain} — alternate possibility
         </h1>
       </header>
       <Suspense
         fallback={
-          <div className="h-24 rounded-xl border border-line bg-panel animate-pulse-soft" role="status" />
+          <div className="h-24 glass rounded-xl animate-pulse-soft" role="status" />
         }
       >
         <LabSharedBody domain={domain} timestamp={timestamp} modeId={mode} />

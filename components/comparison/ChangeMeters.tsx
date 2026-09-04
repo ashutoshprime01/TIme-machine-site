@@ -44,7 +44,7 @@ export function ChangeMeters({ comparison }: { comparison: ComparisonResult }) {
             </div>
           ))}
         </dl>
-        <div className="rounded-xl border border-line bg-panel px-6 py-5 text-center sm:min-w-44">
+        <div className="glass rounded-xl px-6 py-5 text-center sm:min-w-44 card-hover">
           <div className="text-4xl font-bold tabular-nums text-amber-bright">
             {comparison.evolutionIndex}
           </div>

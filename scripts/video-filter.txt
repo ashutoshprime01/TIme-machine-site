@@ -1,0 +1,10 @@
+[0:v]scale=1280:800,setsar=1,fps=24[v0];
+[1:v]scale=1280:800,setsar=1,fps=24[v1];
+[2:v]scale=1280:800,setsar=1,fps=24[v2];
+[3:v]scale=1280:800,setsar=1,fps=24[v3];
+[4:v]scale=1280:800,setsar=1,fps=24[v4];
+[v0][v1]xfade=transition=fade:duration=0.7:offset=1.7[x1];
+[x1][v2]xfade=transition=fade:duration=0.7:offset=3.4[x2];
+[x2][v3]xfade=transition=fade:duration=0.7:offset=5.1[x3];
+[x3][v4]xfade=transition=fade:duration=0.7:offset=6.8[x4];
+[x4]fade=t=in:st=0:d=0.5,fade=t=out:st=8.7:d=0.5,noise=alls=9:allf=t+u,eq=saturation=0.9[out]

@@ -1,166 +1,272 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { SearchBar } from "@/components/SearchBar";
+import { ArchiveBackdrop } from "@/components/landing/ArchiveBackdrop";
+import { HeroSearch } from "@/components/landing/HeroSearch";
+import { HeroShell } from "@/components/landing/HeroShell";
+import { HeroEyebrow } from "@/components/landing/HeroEyebrow";
+import { Pipeline } from "@/components/landing/Pipeline";
+import { DestinationCards } from "@/components/landing/DestinationCards";
+import { EraGallery } from "@/components/landing/EraGallery";
+import { YearRail } from "@/components/landing/YearRail";
+import { EraCompare } from "@/components/landing/EraCompare";
+import { EvolutionReel } from "@/components/landing/EvolutionReel";
+import { DnaMorph } from "@/components/landing/DnaMorph";
+import { Manifesto } from "@/components/landing/Manifesto";
+import { ArsenalWall } from "@/components/landing/ArsenalWall";
+import { Finale } from "@/components/landing/Finale";
+import { ScrollProgress } from "@/components/landing/ScrollProgress";
+import { BootSequence } from "@/components/atmosphere/BootSequence";
+import { Spotlight } from "@/components/atmosphere/Spotlight";
+import { Cursor } from "@/components/atmosphere/Cursor";
+import { Reveal } from "@/components/motion/Reveal";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const EXAMPLES = ["google.com", "youtube.com", "apple.com", "wikipedia.org", "amazon.com"];
+function SectionHeading({
+  eyebrow,
+  title,
+  description,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  description?: string;
+}) {
+  return (
+    <div className="max-w-2xl">
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-balance">
+        {title}
+      </h2>
+      {description && <p className="mt-3 text-mist">{description}</p>}
+    </div>
+  );
+}
 
-const ACTIONS = [
-  {
-    title: "Explore History",
-    description:
-      "Pick a website, pick a year, and see the real archived page — from the 1990s to today.",
-    href: `/entity/google.com`,
-    cta: "See Google through time",
-  },
-  {
-    title: "Compare Websites",
-    description:
-      "Put two eras side by side, wipe between them with a slider, and get a shareable link.",
-    href: `/entity/youtube.com/compare`,
-    cta: "Compare YouTube eras",
-  },
-  {
-    title: "View Internet DNA",
-    description:
-      "Measure minimalism, information density, commercialization, mobile focus and more — deterministically.",
-    href: `/entity/apple.com`,
-    cta: "See Apple through time",
-  },
-  {
-    title: "Explore Discoveries",
-    description:
-      "The most dramatic website changes, oldest sites explored, and community experiments — ranked by transparent signals.",
-    href: `/explore`,
-    cta: "Browse the discovery feed",
-  },
-  {
-    title: "Web History",
-    description:
-      "The eras every website lived through — from the first page at CERN to the AI-native web — with links into real sites.",
-    href: `/history`,
-    cta: "Travel through the web's history",
-  },
-];
+function Hairline() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className="hairline" />
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
     <div>
-      {/* Hero (plan §7) */}
-      <section className="relative border-b border-line">
-        <div aria-hidden="true" className="absolute inset-0 bg-grid bg-grid-fade" />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-20 pb-16 sm:pt-28 sm:pb-20 text-center">
-          <p className="animate-fade-up text-xs font-semibold uppercase tracking-[0.25em] text-amber-bright">
-            Street View for the Internet
-          </p>
-          <h1 className="animate-fade-up mx-auto mt-4 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
-            Travel through the history of the Internet.
-          </h1>
-          <p className="animate-fade-up mx-auto mt-5 max-w-xl text-base sm:text-lg text-mist">
-            Search any website, choose a moment in time, and explore how its
-            design, content, technology and behavior evolved — year by year.
-          </p>
+      {/* atmosphere: boot sequence, custom cursor, film grain,
+          scroll-linked era readout */}
+      <BootSequence />
+      <Cursor />
+      <ScrollProgress />
+      <div className="grain" aria-hidden="true" />
 
-          <div className="animate-fade-up mt-9">
-            <SearchBar />
+      {/* Chapter 00 — the hero: archive wall behind the headline,
+          cursor spotlight, modem-decode eyebrow; dissolves on scroll */}
+      <section className="relative border-b border-white/5 overflow-hidden">
+        <div aria-hidden="true" className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
+        <ArchiveBackdrop />
+        <Spotlight />
+
+        <HeroShell>
+          <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-24 sm:pt-40 sm:pb-32 text-center">
+            <HeroEyebrow />
+            <h1 className="animate-fade-up mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] text-balance font-display">
+              Travel through
+              <br />
+              <span className="font-light italic font-serif text-fog/90">
+                the history of
+              </span>{" "}
+              <span className="text-shimmer">the Internet.</span>
+            </h1>
+            <p className="animate-fade-up mx-auto mt-6 max-w-xl text-base sm:text-lg text-mist">
+              Search any website, choose a moment in time, and explore how its
+              design, content, technology and behavior evolved — year by year.
+            </p>
+
+            <div className="animate-fade-up mt-12">
+              <HeroSearch />
+            </div>
+
+            {/* scroll cue */}
+            <div
+              aria-hidden="true"
+              className="mt-20 mx-auto w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
+            />
+            <p className="sr-only">Scroll to explore</p>
           </div>
+        </HeroShell>
+      </section>
 
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <span className="text-faint">Try:</span>
-            {EXAMPLES.map((ex) => (
-              <Link
-                key={ex}
-                href={`/entity/${ex}`}
-                className="rounded-full border border-line bg-panel px-3 py-1 text-mist hover:text-fog hover:border-faint transition-colors"
-              >
-                {ex}
-              </Link>
-            ))}
+      {/* Chapter — the arsenal wall: two opposing rows of huge
+          outlined words that fill on hover */}
+      <ArsenalWall />
+
+      {/* 01 — The Principle (plan §0) */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="01 — The Principle"
+            title={
+              <>
+                Archive <span className="text-amber-bright">→</span> Analyze{" "}
+                <span className="text-amber-bright">→</span> Visualize{" "}
+                <span className="text-amber-bright">→</span> Evolve
+              </>
+            }
+            description="Real snapshots are the raw material. The product is the understanding of change — measured deterministically, never guessed, and never dependent on paid AI."
+          />
+        </Reveal>
+        <Pipeline />
+      </section>
+
+      <Hairline />
+
+      {/* 02 — Destinations (plan §7) */}
+      <section id="explore" className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="02 — Destinations"
+            title="What would you like to explore?"
+          />
+        </Reveal>
+        <DestinationCards />
+      </section>
+
+      <Hairline />
+
+      {/* 03 — The Gallery: eras as a specimen list */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="03 — The Gallery"
+            title={
+              <>
+                A field guide to{" "}
+                <span className="font-light italic text-fog/80">the web's eras</span>
+              </>
+            }
+            description="Hover an era to meet its exhibit — specimen plates and real artifacts retrieved from the archives. Select one to walk into the genuine article."
+          />
+        </Reveal>
+        <EraGallery />
+      </section>
+
+      <Hairline />
+
+      {/* 04 — The Timeline itself, as an exhibit */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="04 — The Timeline"
+            title={
+              <>
+                Thirty-five years,{" "}
+                <span className="font-light italic text-fog/80">under your thumb</span>
+              </>
+            }
+            description="Drag through the decades — the year under the marker grows dominant, the rest recede into the dark. Release, and the rail settles onto the era you chose."
+          />
+        </Reveal>
+        <Reveal delay={0.1} className="mt-6">
+          <YearRail />
+        </Reveal>
+      </section>
+
+      <Hairline />
+
+      {/* 05 — The Exhibit Hall: then & now slider + the reel */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="05 — The Exhibit Hall"
+            title={
+              <>
+                Then &amp; now,{" "}
+                <span className="font-light italic text-fog/80">face to face</span>
+              </>
+            }
+            description="Wipe the divider between the oldest and newest web. Below it, the continuous reel — thirty-five years passing in nine seconds."
+          />
+        </Reveal>
+        <EraCompare />
+        <Reveal delay={0.1}>
+          <EvolutionReel />
+        </Reveal>
+      </section>
+
+      <Hairline />
+
+      {/* 06 — Internet DNA */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="06 — Internet DNA"
+            title={
+              <>
+                Every era has{" "}
+                <span className="font-light italic text-fog/80">a shape</span>
+              </>
+            }
+            description="Twelve dimensions — from minimalism to AI integration — profile a website's character. Switch eras and watch the profile morph."
+          />
+        </Reveal>
+        <Reveal delay={0.1} className="mt-6">
+          <DnaMorph />
+        </Reveal>
+      </section>
+
+      <Hairline />
+
+      {/* 07 — The Idea: word-by-word manifesto */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-28">
+        <Reveal>
+          <SectionHeading eyebrow="07 — The Idea" title="Why we built this" />
+        </Reveal>
+        <div className="mt-10">
+          <Manifesto />
+        </div>
+      </section>
+
+      <Hairline />
+
+      {/* 08 — The Honesty Rule (plan §77) */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal className="glass rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="orb w-72 h-72 bg-azure/10 -top-24 -right-24"
+          />
+          <div className="relative">
+            <SectionHeading
+              eyebrow="08 — The Honesty Rule"
+              title={
+                <>
+                  Facts, inferences, and hypotheses —{" "}
+                  <span className="font-light italic text-fog/80">never mixed</span>
+                </>
+              }
+            />
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              <span className="chip chip-fact">FACT</span>
+              <span className="chip chip-inference">INFERENCE</span>
+              <span className="chip chip-hypothesis">HYPOTHESIS</span>
+            </div>
+            <p className="mt-5 max-w-3xl text-sm text-mist leading-relaxed">
+              Every statement in Internet Time Machine carries an explicit status.{" "}
+              <strong className="text-fog">Facts</strong> come directly from archived
+              data. <strong className="text-fog">Inferences</strong> are interpretations
+              derived from evidence.{" "}
+              <strong className="text-fog">Hypotheses</strong> — alternate histories,
+              future scenarios — are always labeled clearly as speculation. Speculation
+              is never presented as history.
+            </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
-      {/* How it works — the architectural principle (plan §0) */}
-      <section aria-labelledby="how-heading" className="mx-auto max-w-6xl px-4 sm:px-6 py-14">
-        <h2 id="how-heading" className="text-2xl font-bold tracking-tight">
-          Archive → Analyze → Visualize → Evolve
-        </h2>
-        <p className="mt-2 max-w-2xl text-mist">
-          Real snapshots are the raw material. The product is the understanding
-          of change — measured deterministically, never guessed, and never
-          dependent on paid AI.
-        </p>
-        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              step: "01",
-              title: "Archive",
-              text: "Public web archives hold decades of captures. We fetch only what you ask for.",
-            },
-            {
-              step: "02",
-              title: "Analyze",
-              text: "Deterministic HTML analysis counts words, links, images, structure and technology signals.",
-            },
-            {
-              step: "03",
-              title: "Visualize",
-              text: "Timelines, side-by-side comparisons, sliders and change meters make evolution visible.",
-            },
-            {
-              step: "04",
-              title: "Evolve",
-              text: "Internet DNA profiles quantify each era. Deeper evolution tools grow from this evidence.",
-            },
-          ].map((s) => (
-            <li key={s.step} className="rounded-xl border border-line bg-panel p-5">
-              <div className="text-xs font-semibold tabular-nums text-amber-bright">{s.step}</div>
-              <h3 className="mt-2 font-semibold">{s.title}</h3>
-              <p className="mt-1.5 text-sm text-mist">{s.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* Main actions (plan §7) */}
-      <section id="explore" aria-labelledby="actions-heading" className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
-        <h2 id="actions-heading" className="text-2xl font-bold tracking-tight">
-          What would you like to explore?
-        </h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {ACTIONS.map((a) => (
-            <Link
-              key={a.title}
-              href={a.href}
-              className="group rounded-xl border border-line bg-panel p-6 hover:border-amber/50 hover:bg-raised transition-colors"
-            >
-              <h3 className="font-semibold text-lg group-hover:text-amber-bright transition-colors">
-                {a.title}
-              </h3>
-              <p className="mt-2 text-sm text-mist">{a.description}</p>
-              <span className="mt-4 inline-block text-sm text-amber-bright">{a.cta} →</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Honesty note (plan §77: curious, historical, scientific, honest) */}
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 pb-16">
-        <div className="rounded-xl border border-line bg-panel p-6 sm:p-8">
-          <h2 className="text-lg font-semibold">Facts, inferences, and hypotheses — never mixed</h2>
-          <p className="mt-2 max-w-3xl text-sm text-mist">
-            Every statement in Internet Time Machine carries an explicit status.
-            <strong className="text-fog"> Facts</strong> come directly from
-            archived data. <strong className="text-fog">Inferences</strong> are
-            interpretations derived from evidence. Future features will label
-            hypothetical content clearly as such — speculation is never
-            presented as history.
-          </p>
-        </div>
-      </section>
+      {/* The finale: huge type, live archive clock, status, CTA */}
+      <Finale />
     </div>
   );
 }

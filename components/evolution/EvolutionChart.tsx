@@ -83,7 +83,7 @@ export function EvolutionChart({ points }: { points: ChartPoint[] }) {
           id="chart-series"
           value={series}
           onChange={(e) => setSeries(e.target.value)}
-          className="rounded-md border border-line bg-panel px-2.5 py-1.5 text-sm text-fog"
+          className="rounded-md border border-line bg-raised px-2.5 py-1.5 text-sm text-fog"
         >
           {SERIES.map((s) => (
             <option key={s.id} value={s.id}>

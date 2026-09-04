@@ -28,7 +28,7 @@ async function LabBody({
 
   if (captures.length === 0) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-3">
+      <div className="glass rounded-xl p-8 text-center space-y-3">
         <h2 className="text-lg font-semibold">Nothing to experiment with yet</h2>
         <p className="text-sm text-mist">
           We couldn&apos;t find archived captures for {domain}, so there&apos;s no
@@ -62,7 +62,7 @@ async function LabBody({
         <form
           method="GET"
           action={`/entity/${domain}/lab`}
-          className="rounded-xl border border-line bg-panel p-5 sm:p-6 space-y-5"
+          className="glass rounded-xl p-5 sm:p-6 space-y-5 animate-section"
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -94,7 +94,7 @@ async function LabBody({
               {LAB_MODES.map((m) => (
                 <label
                   key={m.id}
-                  className="flex cursor-pointer gap-3 rounded-lg border border-line bg-raised p-4 hover:border-amber/50 transition-colors has-checked:border-amber has-checked:bg-amber/10"
+                  className="flex cursor-pointer gap-3 glass rounded-lg p-4 card-hover has-checked:border-amber/60 has-checked:bg-amber/10"
                 >
                   <input
                     type="radio"
@@ -116,7 +116,7 @@ async function LabBody({
 
           <button
             type="submit"
-            className="rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
+            className="btn-primary px-5 py-2.5 text-sm animate-pulse-glow"
           >
             Run the transformation
           </button>
@@ -137,7 +137,7 @@ async function LabBody({
     analysis = await analyzeCapture(domain, source);
   } catch {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-3">
+      <div className="glass rounded-xl p-8 text-center space-y-3">
         <h2 className="text-lg font-semibold">We couldn&apos;t analyze the starting snapshot</h2>
         <p className="text-sm text-mist">
           The archive didn&apos;t respond in time. Please try again in a moment.
@@ -177,7 +177,7 @@ async function LabBody({
       {/* the one label the plan insists on (§20) */}
       <div
         role="status"
-        className="rounded-xl border border-amber/60 bg-amber/15 px-5 py-3.5 text-center"
+        className="glass-strong rounded-xl border-amber/60 bg-amber/10 px-5 py-3.5 text-center animate-section"
       >
         <p className="text-sm font-bold tracking-[0.15em] text-amber-bright">
           HYPOTHETICAL — NOT HISTORICAL
@@ -195,8 +195,8 @@ async function LabBody({
           { label: "Transformation", value: mode.label },
           { label: "Result", value: `Hypothetical version` },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-line bg-panel px-4 py-3">
-            <p className="text-xs uppercase tracking-[0.2em] text-faint">{s.label}</p>
+          <div key={s.label} className="glass rounded-xl px-4 py-3.5 card-hover">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">{s.label}</p>
             <p className="mt-1 text-sm font-semibold text-fog">
               {s.href ? (
                 <Link href={s.href} className="hover:text-amber-bright hover:underline">
@@ -211,8 +211,9 @@ async function LabBody({
       </div>
 
       {/* hypothetical DNA vs the real source (labels say which is real) */}
-      <section aria-labelledby="lab-dna-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="lab-dna-heading" className="text-lg font-semibold mb-4">
+      <section aria-labelledby="lab-dna-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Hypothetical DNA</p>
+        <h2 id="lab-dna-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           Hypothetical Internet DNA
         </h2>
         <DnaBarsCompare
@@ -232,14 +233,15 @@ async function LabBody({
       </section>
 
       {/* transformations */}
-      <section aria-labelledby="lab-changes-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="lab-changes-heading" className="text-lg font-semibold mb-4">
+      <section aria-labelledby="lab-changes-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Transformation</p>
+        <h2 id="lab-changes-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           What the transformation does
         </h2>
         <ul className="space-y-3">
           {result.transformations.map((t, i) => (
             <li key={i} className="flex gap-2.5 text-sm">
-              <span className="mt-0.5 shrink-0 rounded border border-amber/50 px-1.5 py-px text-[10px] font-semibold tracking-wide text-amber-bright">
+              <span className="chip chip-hypothesis mt-0.5 shrink-0">
                 {t.status}
               </span>
               <span className="text-mist leading-relaxed">{t.text}</span>
@@ -249,8 +251,9 @@ async function LabBody({
       </section>
 
       {/* recommendations */}
-      <section aria-labelledby="lab-recs-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="lab-recs-heading" className="text-lg font-semibold mb-4">
+      <section aria-labelledby="lab-recs-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Considerations</p>
+        <h2 id="lab-recs-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           Considerations
         </h2>
         <ul className="space-y-2.5 text-sm text-mist leading-relaxed">
@@ -268,13 +271,13 @@ async function LabBody({
         <LabShareButton domain={domain} timestamp={source} mode={mode.id} />
         <Link
           href={`/entity/${domain}/lab?t=${source}`}
-          className="rounded-lg border border-line px-4 py-2 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2 text-sm font-semibold"
         >
           Try another transformation
         </Link>
         <Link
           href={`/entity/${domain}/compare?a=${source}&b=${captures[captures.length - 1].timestamp}`}
-          className="rounded-lg border border-line px-4 py-2 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2 text-sm font-semibold"
         >
           Compare with what really happened →
         </Link>
@@ -295,7 +298,7 @@ function experimentSlug(domain: string, timestamp: string, mode: string): string
 function LabSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-live="polite">
-      <div className="h-24 rounded-xl border border-line bg-panel animate-pulse-soft" />
+      <div className="h-24 glass rounded-xl animate-pulse-soft" />
       <p className="text-center text-sm text-mist">Preparing the Lab…</p>
     </div>
   );
@@ -334,7 +337,7 @@ export default async function LabPage({
         <p className="mt-3 text-mist">{validation.error}</p>
         <Link
           href="/"
-          className="mt-6 inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink"
+          className="btn-primary mt-6 px-5 py-2.5 text-sm"
         >
           Back to search
         </Link>
@@ -348,9 +351,10 @@ export default async function LabPage({
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
       <header className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Evolution Lab</p>
-        <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
-          What if {domain} had evolved differently?
+        <p className="eyebrow eyebrow-accent">Evolution Lab</p>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-balance">
+          What if {domain} had evolved
+          <span className="font-light italic text-fog/80"> differently?</span>
         </h1>
         <p className="mt-2 max-w-2xl text-sm text-mist">
           Pick a real archived version and a transformation. The Lab derives a

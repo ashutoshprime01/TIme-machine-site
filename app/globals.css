@@ -3,22 +3,26 @@
 @theme {
   /* Dark-first cinematic palette (plan §78): near-black ground, subtle
      borders, muted secondary text, two restrained accents. */
-  --color-ink: #0a0a0f; /* page plane */
-  --color-panel: #12121a; /* card surface */
+  --color-ink: #060609; /* page plane — deeper than v1 for glow contrast */
+  --color-panel: #12121a; /* solid data surface (dataviz-validated) */
   --color-raised: #191926; /* raised surface */
   --color-line: #262637; /* hairline borders */
   --color-line-soft: #1e1e2d;
-  --color-fog: #e9e9f2; /* primary ink */
+  --color-fog: #f4f4fa; /* primary ink */
   --color-mist: #a0a0b8; /* secondary ink */
   --color-faint: #6c6c86; /* muted ink */
   --color-amber: #c98500; /* accent 1 — validated series-1 on #12121a */
   --color-amber-bright: #e8b45a; /* brighter amber for text/UI accents */
-  --color-azure: #3987e5; /* accent 2 — validated series-2 */
-  --font-sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-azure: #3987e5; /* accent 2 — validated series-2 (charts) */
+  --color-ice: #6fd6ff; /* epistemic cyan — historical FACT, objective/real */
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-grotesk), var(--font-inter), system-ui, sans-serif;
 }
 
 html {
   color-scheme: dark;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -26,6 +30,7 @@ body {
   color: var(--color-fog);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
@@ -38,11 +43,14 @@ body {
   border-radius: 2px;
 }
 
-/* Subtle hero grid — restrained, not neon (plan §78). */
+/* ------------------------------------------------------------------ */
+/* Ambience — grid, radial washes, orbs (decorative, aria-hidden)      */
+/* ------------------------------------------------------------------ */
+
 .bg-grid {
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.028) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.032) 1px, transparent 1px);
   background-size: 54px 54px;
 }
 
@@ -51,7 +59,244 @@ body {
   mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black 30%, transparent 75%);
 }
 
-/* Restrained motion (plan §79) — informational without animation. */
+/* Multi-hue ambient wash — low-alpha radial light on the deep ground.
+   Amber/azure only, so the wash stays on-brand. */
+.ambient-wash {
+  background-image:
+    radial-gradient(ellipse at 12% 8%, rgba(232, 180, 90, 0.09) 0%, transparent 42%),
+    radial-gradient(ellipse at 82% 16%, rgba(57, 135, 229, 0.1) 0%, transparent 46%),
+    radial-gradient(ellipse at 50% 96%, rgba(201, 133, 0, 0.07) 0%, transparent 52%);
+}
+
+/* A single soft light blob, positioned by utility classes. */
+.orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Film grain — full-viewport archival texture (feTurbulence tile)     */
+/* ------------------------------------------------------------------ */
+
+.grain {
+  position: fixed;
+  inset: -100%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  animation: grain-jitter 0.9s steps(3) infinite;
+}
+
+/* the jitter never slides — film jumps frame to frame */
+@keyframes grain-jitter {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-1.5%, 1%); }
+  40% { transform: translate(1%, -1.5%); }
+  60% { transform: translate(-1%, -1%); }
+  80% { transform: translate(1.5%, 1.5%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Custom cursor (fine pointers, non-reduced motion) — the page adds   */
+/* .cursor-hidden to <html> when the custom cursor is active           */
+/* ------------------------------------------------------------------ */
+
+@media (pointer: fine) {
+  html.cursor-hidden,
+  html.cursor-hidden * {
+    cursor: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Surfaces — glass panels, hairlines                                  */
+/* ------------------------------------------------------------------ */
+
+/* Glass panel: frosted dark surface over the ambient ground. Solid
+   data-bearing surfaces (charts, meters) keep bg-panel instead. */
+.glass {
+  background: rgba(18, 18, 26, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-strong {
+  background: rgba(14, 14, 20, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+/* Gradient hairline divider — light that fades at both ends. */
+.hairline {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.14),
+    transparent
+  );
+  transform-origin: left;
+}
+
+/* Card hover: border catches light, surface lifts slightly. */
+.card-hover {
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  border-color: rgba(232, 180, 90, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------------------------------------------ */
+/* Typography — mono eyebrows, display contrast                        */
+/* ------------------------------------------------------------------ */
+
+/* Mono micro-label: the numbered section eyebrow. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.eyebrow-accent {
+  color: var(--color-amber-bright);
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons — glowing primary, quiet ghost                              */
+/* ------------------------------------------------------------------ */
+
+.btn-primary {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #e8b45a, #c98500);
+  color: #0a0a0f;
+  font-weight: 600;
+  box-shadow:
+    0 0 0 0 rgba(232, 180, 90, 0.4),
+    0 8px 30px -8px rgba(201, 133, 0, 0.45);
+  transition:
+    box-shadow 0.3s ease,
+    filter 0.3s ease,
+    transform 0.15s ease;
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 0 24px 2px rgba(232, 180, 90, 0.35),
+    0 10px 36px -8px rgba(201, 133, 0, 0.55);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--color-mist);
+  transition:
+    border-color 0.25s ease,
+    color 0.25s ease,
+    background-color 0.25s ease;
+}
+.btn-ghost:hover {
+  border-color: rgba(232, 180, 90, 0.4);
+  color: var(--color-fog);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ------------------------------------------------------------------ */
+/* Status chips — FACT / INFERENCE / HYPOTHESIS badges                 */
+/* ------------------------------------------------------------------ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 0.0625rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid;
+}
+
+.chip-fact {
+  color: var(--color-ice);
+  border-color: rgba(111, 214, 255, 0.45);
+  background: rgba(111, 214, 255, 0.08);
+}
+
+.chip-inference {
+  color: var(--color-mist);
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.chip-hypothesis {
+  color: var(--color-amber-bright);
+  border-color: rgba(232, 180, 90, 0.45);
+  background: rgba(201, 133, 0, 0.1);
+}
+
+/* Beveled polygon chip — tech tags, era categories. */
+.chip-poly {
+  --poly-roundness: 6px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+  background: rgba(38, 38, 55, 0.5);
+  backdrop-filter: blur(4px);
+  padding: 0.3rem 0.7rem;
+  clip-path: polygon(
+    var(--poly-roundness) 0,
+    calc(100% - var(--poly-roundness)) 0,
+    100% var(--poly-roundness),
+    100% calc(100% - var(--poly-roundness)),
+    calc(100% - var(--poly-roundness)) 100%,
+    var(--poly-roundness) 100%,
+    0 calc(100% - var(--poly-roundness)),
+    0 var(--poly-roundness)
+  );
+  transition: color 0.25s ease;
+}
+.chip-poly:hover {
+  color: var(--color-fog);
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion — entries, marquee, glow, float, shimmer                     */
+/* ------------------------------------------------------------------ */
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -60,6 +305,17 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes section-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -73,13 +329,145 @@ body {
   }
 }
 
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 180, 90, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 14px rgba(232, 180, 90, 0);
+  }
+}
+
+@keyframes marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Arsenal wall — huge outlined words, slower drift than the ticker */
+@keyframes marquee-slow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-slow {
+  animation: marquee-slow 30s linear infinite;
+}
+
+.text-stroke-word {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 244, 250, 0.28);
+}
+
+.text-stroke-word:hover {
+  color: var(--color-fog);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-slow {
+    animation: none;
+  }
+  .text-stroke-word {
+    color: var(--color-faint);
+    -webkit-text-stroke: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
 .animate-fade-up {
   animation: fade-up 0.5s ease-out both;
+}
+
+.animate-section {
+  animation: section-slide-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .animate-pulse-soft {
   animation: pulse-soft 2.2s ease-in-out infinite;
 }
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.4s ease-in-out infinite;
+}
+
+.animate-marquee {
+  animation: marquee-left 36s linear infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-scroll-cue {
+  animation: scroll-cue 2.2s ease-in-out infinite;
+}
+
+/* Shimmering text — reserved for one hero accent word. */
+.text-shimmer {
+  background: linear-gradient(
+    110deg,
+    var(--color-fog) 40%,
+    var(--color-amber-bright) 50%,
+    var(--color-fog) 60%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+/* Stagger helper: children enter one after another. */
+.stagger > * {
+  animation: fade-up 0.55s ease-out both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.15s; }
+.stagger > *:nth-child(3) { animation-delay: 0.25s; }
+.stagger > *:nth-child(4) { animation-delay: 0.35s; }
+.stagger > *:nth-child(5) { animation-delay: 0.45s; }
+.stagger > *:nth-child(6) { animation-delay: 0.55s; }
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -92,8 +480,10 @@ body {
   }
 }
 
-/* DNA / metric meter marks — thin bars, 4px rounded data-end anchored to
-   baseline, per dataviz mark specs. */
+/* ------------------------------------------------------------------ */
+/* Data marks — untouched, validated (dataviz specs)                   */
+/* ------------------------------------------------------------------ */
+
 .meter-track {
   background: var(--color-line-soft);
   border-radius: 4px;
@@ -107,4 +497,169 @@ body {
 /* Scrollbars that don't fight the dark UI */
 * {
   scrollbar-color: var(--color-line) transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Intelligence OS layer — HUD panels over the 3D canvas               */
+/* ------------------------------------------------------------------ */
+
+/* HUD panel: heavy frosted glass, thin futuristic border, corner
+   brackets. Sits absolutely over the 3D canvas; draggable. */
+.hud-panel {
+  position: absolute;
+  min-width: 220px;
+  max-width: min(480px, calc(100vw - 2rem));
+  background: rgba(10, 10, 16, 0.62);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border: 1px solid rgba(140, 200, 255, 0.14);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 24px 70px -20px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+.hud-panel::before,
+.hud-panel::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgba(111, 214, 255, 0.55);
+  pointer-events: none;
+}
+.hud-panel::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.hud-panel::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Panel title bar: mono label, grab cursor, epistemic status dot. */
+.hud-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-bottom: 1px solid rgba(140, 200, 255, 0.12);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.hud-title:active {
+  cursor: grabbing;
+}
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+.hud-dot-fact {
+  background: var(--color-ice);
+  box-shadow: 0 0 8px 1px rgba(111, 214, 255, 0.7);
+}
+.hud-dot-hypothesis {
+  background: var(--color-amber-bright);
+  box-shadow: 0 0 8px 1px rgba(232, 180, 90, 0.7);
+}
+
+/* Drawer overlay: full-height frosted sheet sliding over the canvas.
+   Semi-transparent so the 3D timeline stays visible behind it. */
+.hud-drawer {
+  background: rgba(8, 8, 13, 0.82);
+  backdrop-filter: blur(26px) saturate(1.15);
+  -webkit-backdrop-filter: blur(26px) saturate(1.15);
+  border: 1px solid rgba(140, 200, 255, 0.16);
+  box-shadow:
+    0 0 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Scanline texture for the canvas fallback / hud chrome. */
+.hud-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Epistemic accent text: cold FACT cyan vs high-alert HYPOTHESIS amber. */
+.text-fact {
+  color: var(--color-ice);
+}
+.text-hypothesis {
+  color: var(--color-amber-bright);
+}
+
+/* HUD toggle chip (canvas controls, drawer launchers). */
+.hud-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid rgba(140, 200, 255, 0.18);
+  background: rgba(10, 10, 16, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.hud-toggle:hover {
+  color: var(--color-fog);
+  border-color: rgba(111, 214, 255, 0.45);
+  box-shadow: 0 0 18px -4px rgba(111, 214, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-title {
+    cursor: default;
+  }
+}
+
+/* Mobile (<lg): panels join the page flow — no absolute positioning,
+   no drag offsets, lighter blur to save mobile GPU/battery. */
+@media (max-width: 1023.98px) {
+  .hud-panel {
+    position: relative;
+    left: auto !important;
+    top: auto !important;
+    width: 100%;
+    max-width: none;
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
+  .hud-title {
+    cursor: default;
+  }
+  .hud-drawer {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .hud-toggle {
+    padding: 0.5rem 0.9rem;
+  }
 }

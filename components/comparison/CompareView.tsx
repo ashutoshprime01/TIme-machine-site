@@ -27,7 +27,7 @@ async function Loaded({
   const captures = await archive.searchCaptures(domain);
   if (captures.length < 2) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+      <div className="glass rounded-xl p-8 text-center">
         <h2 className="text-lg font-semibold">Not enough captures to compare</h2>
         <p className="mt-2 text-sm text-mist">
           We need at least two archived captures of {domain}.
@@ -46,7 +46,7 @@ async function Loaded({
     result = await compareCaptures(domain, tsA, tsB);
   } catch (err) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center">
+      <div className="glass rounded-xl p-8 text-center">
         <h2 className="text-lg font-semibold">Comparison unavailable</h2>
         <p className="mt-2 text-sm text-mist">{friendlyError(err)}</p>
       </div>
@@ -81,8 +81,8 @@ function CompareSkeleton() {
     <div className="space-y-6" role="status" aria-live="polite">
       <p className="text-sm text-mist">Comparing structures… calculating Internet DNA…</p>
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="h-72 rounded-lg border border-line bg-panel animate-pulse-soft" />
-        <div className="h-72 rounded-lg border border-line bg-panel animate-pulse-soft" />
+        <div className="h-72 glass rounded-lg animate-pulse-soft" />
+        <div className="h-72 glass rounded-lg animate-pulse-soft" />
       </div>
     </div>
   );

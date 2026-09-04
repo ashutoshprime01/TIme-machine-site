@@ -1,11 +1,17 @@
-// Entity page (plan §9): the central history page for a website.
+// Entity page (plan §9): the Intelligence OS view — a full-screen 3D
+// particle timeline with floating HUD panels (search, scrubber, DNA,
+// target) and off-canvas Lab/Compare drawers. Server data (captures,
+// measured DNA) is fetched here and handed to the client shell.
 
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { archive, ArchiveError } from "@/lib/archive";
-import { validateDomain, formatCaptureDate } from "@/lib/security/url";
-import { Timeline } from "@/components/timeline/Timeline";
+import { validateDomain } from "@/lib/security/url";
+import { analyzeCapture } from "@/lib/analysis/service";
+import { prisma } from "@/lib/db";
+import { OsShell } from "@/components/os/OsShell";
+import type { DnaProfile } from "@/lib/types";
 
 export async function generateMetadata({
   params,
@@ -24,6 +30,20 @@ export async function generateMetadata({
   };
 }
 
+/** Latest stored (or freshly computed) DNA profile for the domain. */
+async function latestDna(domain: string): Promise<DnaProfile | null> {
+  try {
+    const captures = await archive.searchCaptures(domain);
+    const latest = captures[captures.length - 1];
+    if (!latest) return null;
+    const { analysis } = await analyzeCapture(domain, latest.timestamp);
+    return analysis.dna;
+  } catch {
+    // analysis is best-effort here — the OS works without the DNA panel
+    return null;
+  }
+}
+
 async function EntityBody({ domain }: { domain: string }) {
   let summary;
   try {
@@ -31,7 +51,7 @@ async function EntityBody({ domain }: { domain: string }) {
   } catch (err) {
     if (err instanceof ArchiveError) {
       return (
-        <div className="rounded-xl border border-line bg-panel p-8 text-center">
+        <div className="glass rounded-xl p-8 text-center">
           <h2 className="text-lg font-semibold">We couldn&apos;t retrieve captures right now</h2>
           <p className="mt-2 text-sm text-mist">{err.userMessage}</p>
         </div>
@@ -46,7 +66,7 @@ async function EntityBody({ domain }: { domain: string }) {
   if (captures.length === 0) {
     // Empty state (plan §80)
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-4">
+      <div className="glass rounded-xl p-8 text-center space-y-4">
         <h2 className="text-lg font-semibold">
           No archived captures found for {domain}
         </h2>
@@ -55,12 +75,12 @@ async function EntityBody({ domain }: { domain: string }) {
           archiving.
         </p>
         <div className="flex flex-wrap justify-center gap-3 text-sm">
-          <Link href="/" className="rounded-lg border border-line px-4 py-2 text-mist hover:text-fog">
+          <Link href="/" className="btn-ghost px-4 py-2 text-sm font-semibold">
             Search another website
           </Link>
           <Link
             href="/entity/google.com"
-            className="rounded-lg border border-line px-4 py-2 text-mist hover:text-fog"
+            className="btn-ghost px-4 py-2 text-sm font-semibold"
           >
             Explore a popular website
           </Link>
@@ -71,129 +91,27 @@ async function EntityBody({ domain }: { domain: string }) {
 
   const first = captures[0];
   const latest = captures[captures.length - 1];
+  const dna = await latestDna(domain);
 
   return (
-    <div className="space-y-10">
-      {!summary.complete && (
-        <div
-          role="status"
-          className="rounded-xl border border-amber/40 bg-amber/10 px-5 py-3 text-sm text-amber-bright"
-        >
-          Some periods couldn&apos;t be retrieved from the archive just now —
-          this timeline may be incomplete. Try again in a little while.
-        </div>
-      )}
-
-      {/* header stats */}
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          { label: "First capture", value: formatCaptureDate(first.timestamp) },
-          { label: "Latest capture", value: formatCaptureDate(latest.timestamp) },
-          { label: "Captures found", value: String(captures.length) },
-          { label: "Archive source", value: archive.providerName() },
-        ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-line bg-panel px-4 py-3">
-            <dd className="font-semibold tabular-nums">{s.value}</dd>
-            <dt className="text-xs text-faint mt-0.5">{s.label}</dt>
-          </div>
-        ))}
-      </dl>
-
-      {/* main actions */}
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href={`/entity/${domain}/snapshot/${first.timestamp}`}
-          className="rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
-        >
-          ⇦ Travel to {first.timestamp.slice(0, 4)}
-        </Link>
-        <Link
-          href={`/entity/${domain}/snapshot/${latest.timestamp}`}
-          className="rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
-        >
-          Travel to {latest.timestamp.slice(0, 4)} ⇨
-        </Link>
-        <Link
-          href={`/entity/${domain}/compare?a=${first.timestamp}&b=${latest.timestamp}`}
-          className="rounded-lg border border-amber text-amber-bright px-5 py-2.5 text-sm font-semibold hover:bg-amber/10 transition-colors"
-        >
-          Compare {first.timestamp.slice(0, 4)} vs {latest.timestamp.slice(0, 4)}
-        </Link>
-        <Link
-          href={`/entity/${domain}/evolution`}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-mist hover:text-fog hover:border-amber/50 transition-colors"
-        >
-          Evolution report ↗
-        </Link>
-        <Link
-          href={`/entity/${domain}/lab`}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-mist hover:text-fog hover:border-amber/50 transition-colors"
-        >
-          Evolution Lab ⚗
-        </Link>
-        <Link
-          href={`/entity/${domain}/future`}
-          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-mist hover:text-fog hover:border-amber/50 transition-colors"
-        >
-          Future scenarios 🔮
-        </Link>
-      </div>
-
-      {/* timeline */}
-      <section aria-labelledby="timeline-heading">
-        <h2 id="timeline-heading" className="text-lg font-semibold mb-4">
-          Timeline
-        </h2>
-        <Timeline domain={domain} captures={captures} />
-      </section>
-
-      {/* notable captures */}
-      <section aria-labelledby="notable-heading">
-        <h2 id="notable-heading" className="text-lg font-semibold mb-4">
-          Notable captures
-        </h2>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {pickNotable(captures).map((c) => (
-            <li key={c.timestamp}>
-              <Link
-                href={`/entity/${domain}/snapshot/${c.timestamp}`}
-                className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
-              >
-                <div className="font-semibold tabular-nums">
-                  {formatCaptureDate(c.timestamp)}
-                </div>
-                <div className="mt-1 text-xs text-faint truncate">
-                  {c.original}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
+    <OsShell
+      domain={domain}
+      years={years.map(Number)}
+      firstTimestamp={first.timestamp}
+      latestTimestamp={latest.timestamp}
+      dna={dna}
+      labContent={null}
+      compareContent={null}
+    />
   );
-}
-
-/** Evenly spread sample of captures across the site's history. */
-function pickNotable<T>(items: T[], count = 6): T[] {
-  if (items.length <= count) return items;
-  const picked: T[] = [items[0]];
-  for (let i = 1; i < count - 1; i++) {
-    picked.push(items[Math.round((i * (items.length - 1)) / (count - 1))]);
-  }
-  picked.push(items[items.length - 1]);
-  return [...new Map(picked.map((x) => [JSON.stringify(x), x])).values()];
 }
 
 function TimelineSkeleton() {
   return (
-    <div className="space-y-6" role="status" aria-live="polite">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-xl border border-line bg-panel animate-pulse-soft" />
-        ))}
-      </div>
-      <p className="text-center text-sm text-mist">Finding historical captures…</p>
+    <div className="h-[calc(100vh-5rem)] min-h-[620px] flex items-center justify-center" role="status" aria-live="polite">
+      <p className="font-mono text-sm text-mist animate-pulse-soft">
+        ESTABLISHING UPLINK · RETRIEVING ARCHIVE HISTORY…
+      </p>
     </div>
   );
 }
@@ -214,7 +132,7 @@ export default async function EntityPage({
         <p className="mt-3 text-mist">{validation.error}</p>
         <Link
           href="/"
-          className="mt-6 inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink"
+          className="btn-primary mt-6 px-5 py-2.5 text-sm"
         >
           Back to search
         </Link>
@@ -223,14 +141,54 @@ export default async function EntityPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
-      <header className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Entity</p>
-        <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">{domain}</h1>
+    <div className="mx-auto max-w-[1400px] px-4 sm:px-6 py-6">
+      <header className="mb-6">
+        <p className="eyebrow eyebrow-accent">Entity</p>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight font-display">{domain}</h1>
       </header>
       <Suspense fallback={<TimelineSkeleton />}>
         <EntityBody domain={domain} />
       </Suspense>
+      {/* classic timeline below the OS for accessibility & deep links */}
+      <section aria-labelledby="timeline-heading" className="mt-10">
+        <p className="eyebrow">Full timeline</p>
+        <h2 id="timeline-heading" className="mt-1 text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          {domain} through the years
+        </h2>
+        <ClassicTimeline domain={domain} />
+      </section>
     </div>
+  );
+}
+
+/** Server-rendered year grid — the accessible fallback under the OS. */
+async function ClassicTimeline({ domain }: { domain: string }) {
+  let summary;
+  try {
+    summary = await archive.getCaptureSummary(domain);
+  } catch {
+    return (
+      <p className="text-sm text-mist">
+        Timeline temporarily unavailable — the archive didn&apos;t respond.
+      </p>
+    );
+  }
+  const { capturesByYear, years } = summary;
+  return (
+    <ol className="flex flex-wrap gap-2.5">
+      {years.map((y) => {
+        const firstOfYear = capturesByYear[y][0];
+        return (
+          <li key={y}>
+            <Link
+              href={`/entity/${domain}/snapshot/${firstOfYear.timestamp}`}
+              className="chip-poly !text-sm !normal-case !tracking-normal tabular-nums"
+            >
+              {y}
+            </Link>
+          </li>
+        );
+      })}
+    </ol>
   );
 }

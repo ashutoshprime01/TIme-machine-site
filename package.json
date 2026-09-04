@@ -12,10 +12,17 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.0",
+    "@react-three/drei": "^10.7.8",
+    "@react-three/fiber": "^9.7.0",
+    "@react-three/postprocessing": "^3.1.1",
+    "@types/three": "^0.185.4",
     "cheerio": "^1.0.0",
+    "framer-motion": "^13.2.0",
     "next": "^15.5.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "three": "^0.185.1",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.0",

@@ -46,7 +46,7 @@ export default async function SharePage({
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
       <header className="mb-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Shared comparison</p>
+        <p className="eyebrow eyebrow-accent">Shared comparison</p>
         <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">
           {share.domain}: {formatCaptureDate(share.timestampA)} vs{" "}
           {formatCaptureDate(share.timestampB)}

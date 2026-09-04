@@ -50,7 +50,7 @@ async function AnalysisSection({
         ? err.userMessage
         : "We couldn't analyze this snapshot. Please try again in a moment.";
     return (
-      <div className="rounded-xl border border-line bg-panel p-6">
+      <div className="glass rounded-xl p-6">
         <h2 className="font-semibold">Analysis unavailable</h2>
         <p className="mt-2 text-sm text-mist">{userMessage}</p>
         <p className="mt-2 text-xs text-faint">
@@ -80,7 +80,7 @@ function AnalysisSkeleton() {
       <p className="text-sm text-mist">Analyzing snapshot… calculating Internet DNA…</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-lg border border-line-soft bg-panel animate-pulse-soft" />
+          <div key={i} className="h-16 rounded-lg bg-raised animate-pulse-soft" />
         ))}
       </div>
     </div>
@@ -145,7 +145,7 @@ export default async function SnapshotPage({
         <div>
           <Link
             href={`/entity/${domain}`}
-            className="text-xs text-faint hover:text-mist transition-colors"
+            className="font-mono text-xs uppercase tracking-[0.2em] text-faint hover:text-mist transition-colors"
           >
             ← {domain}
           </Link>
@@ -159,24 +159,24 @@ export default async function SnapshotPage({
           {prev ? (
             <Link
               href={`/entity/${domain}/snapshot/${prev.timestamp}`}
-              className="rounded-lg border border-line px-3 py-2 text-sm text-mist hover:text-fog hover:border-faint transition-colors"
+              className="chip-poly !text-sm !normal-case !tracking-normal !px-3 !py-2"
             >
               ⇦ Previous
             </Link>
           ) : (
-            <span className="rounded-lg border border-line-soft px-3 py-2 text-sm text-faint">
+            <span className="chip-poly !text-sm !normal-case !tracking-normal !px-3 !py-2 opacity-50">
               ⇦ Previous
             </span>
           )}
           {next ? (
             <Link
               href={`/entity/${domain}/snapshot/${next.timestamp}`}
-              className="rounded-lg border border-line px-3 py-2 text-sm text-mist hover:text-fog hover:border-faint transition-colors"
+              className="chip-poly !text-sm !normal-case !tracking-normal !px-3 !py-2"
             >
               Next ⇨
             </Link>
           ) : (
-            <span className="rounded-lg border border-line-soft px-3 py-2 text-sm text-faint">
+            <span className="chip-poly !text-sm !normal-case !tracking-normal !px-3 !py-2 opacity-50">
               Next ⇨
             </span>
           )}
@@ -196,7 +196,7 @@ export default async function SnapshotPage({
           title={`Archived ${domain} page from ${formatCaptureDate(current.timestamp)}`}
           footer={
             // source attribution (plan §68)
-            <dl className="grid gap-x-6 gap-y-1 rounded-lg border border-line bg-panel px-4 py-3 text-xs text-mist sm:grid-cols-4">
+            <dl className="grid gap-x-6 gap-y-1 glass rounded-lg px-4 py-3 text-xs text-mist sm:grid-cols-4">
               <div>
                 <dt className="text-faint">Source</dt>
                 <dd className="mt-0.5">Internet Archive (Wayback Machine)</dd>
