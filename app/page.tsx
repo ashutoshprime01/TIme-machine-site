@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { SearchBar } from "@/components/SearchBar";
 import { Marquee } from "@/components/ui/Marquee";
+import { OsCanvas } from "@/components/os/OsCanvas";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -96,24 +97,24 @@ function SectionHeading({
 export default function HomePage() {
   return (
     <div>
-      {/* Hero (plan §7) */}
+      {/* Hero (plan §7) — floats over the 3D particle timeline */}
       <section className="relative border-b border-white/5 overflow-hidden">
+        <OsCanvas />
         <div aria-hidden="true" className="absolute inset-0 bg-grid bg-grid-fade" />
-        <div aria-hidden="true" className="absolute inset-0 ambient-wash" />
         <div
           aria-hidden="true"
-          className="orb w-[480px] h-[480px] bg-amber/20 -top-40 -left-32 animate-float"
-        />
-        <div
-          aria-hidden="true"
-          className="orb w-[420px] h-[420px] bg-azure/15 top-24 -right-32"
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(6,6,9,0.25) 0%, rgba(6,6,9,0.55) 60%, rgba(6,6,9,0.95) 100%)",
+          }}
         />
 
         <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-24 pb-20 sm:pt-36 sm:pb-28 text-center">
           <p className="animate-fade-up eyebrow eyebrow-accent">
             Street View for the Internet
           </p>
-          <h1 className="animate-fade-up mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] text-balance">
+          <h1 className="animate-fade-up mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] text-balance font-display">
             Travel through
             <br />
             <span className="font-light italic font-serif text-fog/90">

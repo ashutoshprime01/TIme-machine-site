@@ -1,11 +1,17 @@
-// Entity page (plan §9): the central history page for a website.
+// Entity page (plan §9): the Intelligence OS view — a full-screen 3D
+// particle timeline with floating HUD panels (search, scrubber, DNA,
+// target) and off-canvas Lab/Compare drawers. Server data (captures,
+// measured DNA) is fetched here and handed to the client shell.
 
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { archive, ArchiveError } from "@/lib/archive";
-import { validateDomain, formatCaptureDate } from "@/lib/security/url";
-import { Timeline } from "@/components/timeline/Timeline";
+import { validateDomain } from "@/lib/security/url";
+import { analyzeCapture } from "@/lib/analysis/service";
+import { prisma } from "@/lib/db";
+import { OsShell } from "@/components/os/OsShell";
+import type { DnaProfile } from "@/lib/types";
 
 export async function generateMetadata({
   params,
@@ -22,6 +28,20 @@ export async function generateMetadata({
     alternates: { canonical: `/entity/${domain}` },
     openGraph: { title: `${title} — Internet Time Machine`, type: "website" },
   };
+}
+
+/** Latest stored (or freshly computed) DNA profile for the domain. */
+async function latestDna(domain: string): Promise<DnaProfile | null> {
+  try {
+    const captures = await archive.searchCaptures(domain);
+    const latest = captures[captures.length - 1];
+    if (!latest) return null;
+    const { analysis } = await analyzeCapture(domain, latest.timestamp);
+    return analysis.dna;
+  } catch {
+    // analysis is best-effort here — the OS works without the DNA panel
+    return null;
+  }
 }
 
 async function EntityBody({ domain }: { domain: string }) {
@@ -71,131 +91,27 @@ async function EntityBody({ domain }: { domain: string }) {
 
   const first = captures[0];
   const latest = captures[captures.length - 1];
+  const dna = await latestDna(domain);
 
   return (
-    <div className="space-y-10">
-      {!summary.complete && (
-        <div
-          role="status"
-          className="rounded-xl border border-amber/40 bg-amber/10 px-5 py-3 text-sm text-amber-bright backdrop-blur-sm"
-        >
-          Some periods couldn&apos;t be retrieved from the archive just now —
-          this timeline may be incomplete. Try again in a little while.
-        </div>
-      )}
-
-      {/* header stats */}
-      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 stagger">
-        {[
-          { label: "First capture", value: formatCaptureDate(first.timestamp) },
-          { label: "Latest capture", value: formatCaptureDate(latest.timestamp) },
-          { label: "Captures found", value: String(captures.length) },
-          { label: "Archive source", value: archive.providerName() },
-        ].map((s) => (
-          <div key={s.label} className="glass rounded-xl px-4 py-3.5 card-hover">
-            <dd className="font-semibold tabular-nums text-lg">{s.value}</dd>
-            <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint mt-1">{s.label}</dt>
-          </div>
-        ))}
-      </dl>
-
-      {/* main actions */}
-      <div className="flex flex-wrap gap-3">
-        <Link
-          href={`/entity/${domain}/snapshot/${first.timestamp}`}
-          className="btn-primary px-5 py-2.5 text-sm"
-        >
-          ⇦ Travel to {first.timestamp.slice(0, 4)}
-        </Link>
-        <Link
-          href={`/entity/${domain}/snapshot/${latest.timestamp}`}
-          className="btn-primary px-5 py-2.5 text-sm"
-        >
-          Travel to {latest.timestamp.slice(0, 4)} ⇨
-        </Link>
-        <Link
-          href={`/entity/${domain}/compare?a=${first.timestamp}&b=${latest.timestamp}`}
-          className="btn-ghost px-5 py-2.5 text-sm font-semibold"
-        >
-          Compare {first.timestamp.slice(0, 4)} vs {latest.timestamp.slice(0, 4)}
-        </Link>
-        <Link
-          href={`/entity/${domain}/evolution`}
-          className="btn-ghost px-5 py-2.5 text-sm font-semibold"
-        >
-          Evolution report ↗
-        </Link>
-        <Link
-          href={`/entity/${domain}/lab`}
-          className="btn-ghost px-5 py-2.5 text-sm font-semibold"
-        >
-          Evolution Lab ⚗
-        </Link>
-        <Link
-          href={`/entity/${domain}/future`}
-          className="btn-ghost px-5 py-2.5 text-sm font-semibold"
-        >
-          Future scenarios 🔮
-        </Link>
-      </div>
-
-      {/* timeline */}
-      <section aria-labelledby="timeline-heading">
-        <p className="eyebrow">Timeline</p>
-        <h2 id="timeline-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
-          {domain} through the years
-        </h2>
-        <Timeline domain={domain} captures={captures} />
-      </section>
-
-      {/* notable captures */}
-      <section aria-labelledby="notable-heading">
-        <p className="eyebrow">Notable captures</p>
-        <h2 id="notable-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
-          Moments worth visiting
-        </h2>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {pickNotable(captures).map((c) => (
-            <li key={c.timestamp}>
-              <Link
-                href={`/entity/${domain}/snapshot/${c.timestamp}`}
-                className="block glass rounded-xl p-4 card-hover"
-              >
-                <div className="font-semibold tabular-nums">
-                  {formatCaptureDate(c.timestamp)}
-                </div>
-                <div className="mt-1 font-mono text-xs text-faint truncate">
-                  {c.original}
-                </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </div>
+    <OsShell
+      domain={domain}
+      years={years.map(Number)}
+      firstTimestamp={first.timestamp}
+      latestTimestamp={latest.timestamp}
+      dna={dna}
+      labContent={null}
+      compareContent={null}
+    />
   );
-}
-
-/** Evenly spread sample of captures across the site's history. */
-function pickNotable<T>(items: T[], count = 6): T[] {
-  if (items.length <= count) return items;
-  const picked: T[] = [items[0]];
-  for (let i = 1; i < count - 1; i++) {
-    picked.push(items[Math.round((i * (items.length - 1)) / (count - 1))]);
-  }
-  picked.push(items[items.length - 1]);
-  return [...new Map(picked.map((x) => [JSON.stringify(x), x])).values()];
 }
 
 function TimelineSkeleton() {
   return (
-    <div className="space-y-6" role="status" aria-live="polite">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-16 glass rounded-xl animate-pulse-soft" />
-        ))}
-      </div>
-      <p className="text-center text-sm text-mist">Finding historical captures…</p>
+    <div className="h-[calc(100vh-5rem)] min-h-[620px] flex items-center justify-center" role="status" aria-live="polite">
+      <p className="font-mono text-sm text-mist animate-pulse-soft">
+        ESTABLISHING UPLINK · RETRIEVING ARCHIVE HISTORY…
+      </p>
     </div>
   );
 }
@@ -225,14 +141,54 @@ export default async function EntityPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
-      <header className="mb-10">
+    <div className="mx-auto max-w-[1400px] px-4 sm:px-6 py-6">
+      <header className="mb-6">
         <p className="eyebrow eyebrow-accent">Entity</p>
-        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight">{domain}</h1>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight font-display">{domain}</h1>
       </header>
       <Suspense fallback={<TimelineSkeleton />}>
         <EntityBody domain={domain} />
       </Suspense>
+      {/* classic timeline below the OS for accessibility & deep links */}
+      <section aria-labelledby="timeline-heading" className="mt-10">
+        <p className="eyebrow">Full timeline</p>
+        <h2 id="timeline-heading" className="mt-1 text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          {domain} through the years
+        </h2>
+        <ClassicTimeline domain={domain} />
+      </section>
     </div>
+  );
+}
+
+/** Server-rendered year grid — the accessible fallback under the OS. */
+async function ClassicTimeline({ domain }: { domain: string }) {
+  let summary;
+  try {
+    summary = await archive.getCaptureSummary(domain);
+  } catch {
+    return (
+      <p className="text-sm text-mist">
+        Timeline temporarily unavailable — the archive didn&apos;t respond.
+      </p>
+    );
+  }
+  const { capturesByYear, years } = summary;
+  return (
+    <ol className="flex flex-wrap gap-2.5">
+      {years.map((y) => {
+        const firstOfYear = capturesByYear[y][0];
+        return (
+          <li key={y}>
+            <Link
+              href={`/entity/${domain}/snapshot/${firstOfYear.timestamp}`}
+              className="chip-poly !text-sm !normal-case !tracking-normal tabular-nums"
+            >
+              {y}
+            </Link>
+          </li>
+        );
+      })}
+    </ol>
   );
 }

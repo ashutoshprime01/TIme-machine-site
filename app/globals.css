@@ -13,9 +13,11 @@
   --color-faint: #6c6c86; /* muted ink */
   --color-amber: #c98500; /* accent 1 — validated series-1 on #12121a */
   --color-amber-bright: #e8b45a; /* brighter amber for text/UI accents */
-  --color-azure: #3987e5; /* accent 2 — validated series-2 */
+  --color-azure: #3987e5; /* accent 2 — validated series-2 (charts) */
+  --color-ice: #6fd6ff; /* epistemic cyan — historical FACT, objective/real */
   --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-grotesk), var(--font-inter), system-ui, sans-serif;
 }
 
 html {
@@ -205,9 +207,9 @@ body {
 }
 
 .chip-fact {
-  color: var(--color-azure);
-  border-color: rgba(57, 135, 229, 0.45);
-  background: rgba(57, 135, 229, 0.08);
+  color: var(--color-ice);
+  border-color: rgba(111, 214, 255, 0.45);
+  background: rgba(111, 214, 255, 0.08);
 }
 
 .chip-inference {
@@ -422,4 +424,145 @@ body {
 /* Scrollbars that don't fight the dark UI */
 * {
   scrollbar-color: var(--color-line) transparent;
+}
+
+/* ------------------------------------------------------------------ */
+/* Intelligence OS layer — HUD panels over the 3D canvas               */
+/* ------------------------------------------------------------------ */
+
+/* HUD panel: heavy frosted glass, thin futuristic border, corner
+   brackets. Sits absolutely over the 3D canvas; draggable. */
+.hud-panel {
+  position: absolute;
+  min-width: 220px;
+  max-width: min(480px, calc(100vw - 2rem));
+  background: rgba(10, 10, 16, 0.62);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border: 1px solid rgba(140, 200, 255, 0.14);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 24px 70px -20px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+.hud-panel::before,
+.hud-panel::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: rgba(111, 214, 255, 0.55);
+  pointer-events: none;
+}
+.hud-panel::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.hud-panel::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+/* Panel title bar: mono label, grab cursor, epistemic status dot. */
+.hud-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-bottom: 1px solid rgba(140, 200, 255, 0.12);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.hud-title:active {
+  cursor: grabbing;
+}
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+.hud-dot-fact {
+  background: var(--color-ice);
+  box-shadow: 0 0 8px 1px rgba(111, 214, 255, 0.7);
+}
+.hud-dot-hypothesis {
+  background: var(--color-amber-bright);
+  box-shadow: 0 0 8px 1px rgba(232, 180, 90, 0.7);
+}
+
+/* Drawer overlay: full-height frosted sheet sliding over the canvas.
+   Semi-transparent so the 3D timeline stays visible behind it. */
+.hud-drawer {
+  background: rgba(8, 8, 13, 0.82);
+  backdrop-filter: blur(26px) saturate(1.15);
+  -webkit-backdrop-filter: blur(26px) saturate(1.15);
+  border: 1px solid rgba(140, 200, 255, 0.16);
+  box-shadow:
+    0 0 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Scanline texture for the canvas fallback / hud chrome. */
+.hud-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02) 0px,
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* Epistemic accent text: cold FACT cyan vs high-alert HYPOTHESIS amber. */
+.text-fact {
+  color: var(--color-ice);
+}
+.text-hypothesis {
+  color: var(--color-amber-bright);
+}
+
+/* HUD toggle chip (canvas controls, drawer launchers). */
+.hud-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid rgba(140, 200, 255, 0.18);
+  background: rgba(10, 10, 16, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.hud-toggle:hover {
+  color: var(--color-fog);
+  border-color: rgba(111, 214, 255, 0.45);
+  box-shadow: 0 0 18px -4px rgba(111, 214, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-title {
+    cursor: default;
+  }
 }
