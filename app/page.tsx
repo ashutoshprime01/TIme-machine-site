@@ -37,6 +37,13 @@ const ACTIONS = [
     href: `/explore`,
     cta: "Browse the discovery feed",
   },
+  {
+    title: "Web History",
+    description:
+      "The eras every website lived through — from the first page at CERN to the AI-native web — with links into real sites.",
+    href: `/history`,
+    cta: "Travel through the web's history",
+  },
 ];
 
 export default function HomePage() {

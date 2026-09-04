@@ -22,6 +22,12 @@ export function Header() {
             Discover
           </Link>
           <Link
+            href="/history"
+            className="px-3 py-2 rounded-md text-mist hover:text-fog hover:bg-raised transition-colors"
+          >
+            Web History
+          </Link>
+          <Link
             href="/about"
             className="px-3 py-2 rounded-md text-mist hover:text-fog hover:bg-raised transition-colors"
           >

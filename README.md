@@ -25,13 +25,14 @@ Snapshot → Compare → Basic Internet DNA → Shareable URL.
 | Evolution Lab (§20–21, §48) | ✅ 7 deterministic transformation modes, hypothetical DNA, experiment storage + sharing |
 | Future Mode (§24, §49) | ✅ 2030/2035/2040 scenarios extrapolated from measured trends, assumptions, HYPOTHESIS-labeled |
 | Discovery (§37) | ✅ `/explore` — dramatic changes, oldest sites, minimal sites, recent shares/experiments, transparent ranking signals |
+| Global history (§25–26) | ✅ `/history` — curated era timeline with links into real sites + measured technology presence from stored analyses |
 | Sharing (§35) | ✅ `/share/<domain>-<yearA>-vs-<yearB>-<id>` with OG metadata |
 | Security (§33) | ✅ SSRF guards, sandbox isolation, input sanitization, rate limiting |
 | Caching (§30) | ✅ content-hash reuse, two-layer cache (memory + disk) |
 | Data model (§28) | ✅ Entity / Snapshot / Analysis / Dna / Share with indexes |
 
 Not yet (per plan phases): optional local AI,
-accounts, collections, likes/bookmarks, comments, global internet-history timeline.
+accounts, collections, likes/bookmarks, comments.
 
 ## Getting started
 
