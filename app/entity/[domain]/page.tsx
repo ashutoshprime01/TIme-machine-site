@@ -131,6 +131,12 @@ async function EntityBody({ domain }: { domain: string }) {
         >
           Evolution Lab ⚗
         </Link>
+        <Link
+          href={`/entity/${domain}/future`}
+          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-mist hover:text-fog hover:border-amber/50 transition-colors"
+        >
+          Future scenarios 🔮
+        </Link>
       </div>
 
       {/* timeline */}
