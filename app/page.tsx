@@ -1,14 +1,12 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { SearchBar } from "@/components/SearchBar";
 import { Marquee } from "@/components/ui/Marquee";
-import { OsCanvas } from "@/components/os/OsCanvas";
+import { ArchiveBackdrop } from "@/components/landing/ArchiveBackdrop";
+import { HeroSearch } from "@/components/landing/HeroSearch";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
-
-const EXAMPLES = ["google.com", "youtube.com", "apple.com", "wikipedia.org", "amazon.com"];
 
 const ARSENAL = [
   "Wayback CDX", "Deterministic Analysis", "Internet DNA", "Evolution Engine",
@@ -97,24 +95,17 @@ function SectionHeading({
 export default function HomePage() {
   return (
     <div>
-      {/* Hero (plan §7) — floats over the 3D particle timeline */}
+      {/* Hero (plan §7) — the archive wall: faded era wireframes drift
+          behind the headline and search; edges dissolve into the dark */}
       <section className="relative border-b border-white/5 overflow-hidden">
-        <OsCanvas />
-        <div aria-hidden="true" className="absolute inset-0 bg-grid bg-grid-fade" />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to bottom, rgba(6,6,9,0.25) 0%, rgba(6,6,9,0.55) 60%, rgba(6,6,9,0.95) 100%)",
-          }}
-        />
+        <div aria-hidden="true" className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
+        <ArchiveBackdrop />
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-24 pb-20 sm:pt-36 sm:pb-28 text-center">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-24 sm:pt-40 sm:pb-32 text-center">
           <p className="animate-fade-up eyebrow eyebrow-accent">
             Street View for the Internet
           </p>
-          <h1 className="animate-fade-up mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl lg:text-8xl font-extrabold tracking-tight leading-[0.95] text-balance font-display">
+          <h1 className="animate-fade-up mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02] text-balance font-display">
             Travel through
             <br />
             <span className="font-light italic font-serif text-fog/90">
@@ -127,27 +118,14 @@ export default function HomePage() {
             design, content, technology and behavior evolved — year by year.
           </p>
 
-          <div className="animate-fade-up mt-10">
-            <SearchBar />
-          </div>
-
-          <div className="animate-fade-up mt-6 flex flex-wrap items-center justify-center gap-2 text-sm">
-            <span className="font-mono text-xs tracking-[0.2em] uppercase text-faint">Try</span>
-            {EXAMPLES.map((ex) => (
-              <Link
-                key={ex}
-                href={`/entity/${ex}`}
-                className="chip-poly"
-              >
-                {ex}
-              </Link>
-            ))}
+          <div className="animate-fade-up mt-12">
+            <HeroSearch />
           </div>
 
           {/* scroll cue */}
           <div
             aria-hidden="true"
-            className="mt-16 mx-auto w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
+            className="mt-20 mx-auto w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
           />
           <p className="sr-only">Scroll to explore</p>
         </div>

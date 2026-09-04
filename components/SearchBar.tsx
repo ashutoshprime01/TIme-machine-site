@@ -33,7 +33,7 @@ export function SearchBar({
         Search a website, company, product, or URL
       </label>
       <div
-        className={`group relative flex-1 rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-all duration-300 focus-within:border-amber-bright/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_30px_-6px_rgba(232,180,90,0.25)] ${
+        className={`group relative flex-1 rounded-xl border border-white/15 bg-ink/70 backdrop-blur-xl transition-all duration-300 focus-within:border-amber-bright/60 focus-within:bg-ink/85 focus-within:shadow-[0_0_0_1px_rgba(232,180,90,0.35),0_0_44px_-8px_rgba(232,180,90,0.45)] ${
           large ? "" : "text-sm"
         }`}
       >
