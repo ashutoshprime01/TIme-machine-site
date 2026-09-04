@@ -11,7 +11,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import { SearchBar } from "@/components/SearchBar";
 
 /** Verified popular entities — archive coverage years, widely
-    documented Wayback coverage (approximate ranges, marketing copy). */
+    documented Wayback coverage (approximate ranges, marketing copy).
+    Favicons are self-hosted in /public/favicons (fetched once at
+    build time, no third-party requests at runtime). */
 const ENTITIES = [
   { domain: "google.com", name: "Google", range: "1998 → 2026" },
   { domain: "youtube.com", name: "YouTube", range: "2005 → 2026" },
@@ -76,7 +78,7 @@ export function HeroSearch() {
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-raised ring-1 ring-white/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={`https://www.google.com/s2/favicons?domain=${e.domain}&sz=64`}
+                  src={`/favicons/${e.domain}.png`}
                   alt=""
                   width={14}
                   height={14}
