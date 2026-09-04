@@ -16,16 +16,16 @@ export function Header() {
         </Link>
         <nav aria-label="Main" className="flex items-center gap-1 sm:gap-2 text-sm">
           <Link
+            href="/explore"
+            className="px-3 py-2 rounded-md text-mist hover:text-fog hover:bg-raised transition-colors"
+          >
+            Discover
+          </Link>
+          <Link
             href="/about"
             className="px-3 py-2 rounded-md text-mist hover:text-fog hover:bg-raised transition-colors"
           >
             Methodology
-          </Link>
-          <Link
-            href="/#explore"
-            className="px-3 py-2 rounded-md text-mist hover:text-fog hover:bg-raised transition-colors"
-          >
-            Explore
           </Link>
         </nav>
       </div>

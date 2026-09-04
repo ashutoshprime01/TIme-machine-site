@@ -24,13 +24,14 @@ Snapshot → Compare → Basic Internet DNA → Shareable URL.
 | Evolution Engine (§17–19, §46) | ✅ per-year sampling, evolution score, detected events, cross-year charts |
 | Evolution Lab (§20–21, §48) | ✅ 7 deterministic transformation modes, hypothetical DNA, experiment storage + sharing |
 | Future Mode (§24, §49) | ✅ 2030/2035/2040 scenarios extrapolated from measured trends, assumptions, HYPOTHESIS-labeled |
+| Discovery (§37) | ✅ `/explore` — dramatic changes, oldest sites, minimal sites, recent shares/experiments, transparent ranking signals |
 | Sharing (§35) | ✅ `/share/<domain>-<yearA>-vs-<yearB>-<id>` with OG metadata |
 | Security (§33) | ✅ SSRF guards, sandbox isolation, input sanitization, rate limiting |
 | Caching (§30) | ✅ content-hash reuse, two-layer cache (memory + disk) |
 | Data model (§28) | ✅ Entity / Snapshot / Analysis / Dna / Share with indexes |
 
 Not yet (per plan phases): optional local AI,
-accounts, collections, discovery, global internet-history timeline.
+accounts, collections, likes/bookmarks, comments, global internet-history timeline.
 
 ## Getting started
 

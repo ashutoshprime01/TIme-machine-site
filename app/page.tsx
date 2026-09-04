@@ -30,6 +30,13 @@ const ACTIONS = [
     href: `/entity/apple.com`,
     cta: "See Apple through time",
   },
+  {
+    title: "Explore Discoveries",
+    description:
+      "The most dramatic website changes, oldest sites explored, and community experiments — ranked by transparent signals.",
+    href: `/explore`,
+    cta: "Browse the discovery feed",
+  },
 ];
 
 export default function HomePage() {
