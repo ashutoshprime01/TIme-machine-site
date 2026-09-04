@@ -25,7 +25,7 @@ async function FutureBody({
 
   if (report.points.length < 2) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-3">
+      <div className="glass rounded-xl p-8 text-center space-y-3">
         <h2 className="text-lg font-semibold">Not enough history to extrapolate</h2>
         <p className="text-sm text-mist">
           Future scenarios need at least two analyzed years of {domain}&apos;s real
@@ -47,7 +47,7 @@ async function FutureBody({
       <form
         method="GET"
         action={`/entity/${domain}/future`}
-        className="rounded-xl border border-line bg-panel p-5 sm:p-6 space-y-5"
+        className="glass rounded-xl p-5 sm:p-6 space-y-5 animate-section"
       >
         <div className="space-y-2">
           <label htmlFor="future-year" className="text-sm font-medium text-fog">
@@ -73,7 +73,7 @@ async function FutureBody({
             {SCENARIOS.map((s) => (
               <label
                 key={s.id}
-                className="flex cursor-pointer gap-3 rounded-lg border border-line bg-raised p-4 hover:border-amber/50 transition-colors has-checked:border-amber has-checked:bg-amber/10"
+                className="flex cursor-pointer gap-3 glass rounded-lg p-4 card-hover has-checked:border-amber/60 has-checked:bg-amber/10"
               >
                 <input
                   type="radio"
@@ -95,7 +95,7 @@ async function FutureBody({
 
         <button
           type="submit"
-          className="rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
+          className="btn-primary px-5 py-2.5 text-sm animate-pulse-glow"
         >
           Extrapolate to the future
         </button>
@@ -118,7 +118,7 @@ async function FutureBody({
       {/* speculation banner (plan §24: never present future output as fact) */}
       <div
         role="status"
-        className="rounded-xl border border-amber/60 bg-amber/15 px-5 py-3.5 text-center"
+        className="glass-strong rounded-xl border-amber/60 bg-amber/10 px-5 py-3.5 text-center animate-section"
       >
         <p className="text-sm font-bold tracking-[0.15em] text-amber-bright">
           HYPOTHETICAL — SPECULATION, NOT PREDICTION
@@ -131,8 +131,9 @@ async function FutureBody({
 
       {/* facets from plan §24's example */}
       <section aria-labelledby="facets-heading">
-        <h2 id="facets-heading" className="text-lg font-semibold mb-4">
-          {year} — {scenario.label.toLowerCase()} scenario
+        <p className="eyebrow">{year} — {scenario.label.toLowerCase()} scenario</p>
+        <h2 id="facets-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          The shape of this future
         </h2>
         <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {(
@@ -143,8 +144,8 @@ async function FutureBody({
               ["Search", result.facets.search],
             ] as Array<[string, string]>
           ).map(([label, value]) => (
-            <div key={label} className="rounded-xl border border-line bg-panel px-4 py-3">
-              <dt className="text-xs uppercase tracking-[0.2em] text-faint">{label}</dt>
+            <div key={label} className="glass rounded-xl px-4 py-3.5 card-hover">
+              <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-faint">{label}</dt>
               <dd className="mt-1 text-sm font-medium text-fog">{value}</dd>
             </div>
           ))}
@@ -156,8 +157,9 @@ async function FutureBody({
       </section>
 
       {/* extrapolated DNA vs the latest real year */}
-      <section aria-labelledby="future-dna-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="future-dna-heading" className="text-lg font-semibold mb-4">
+      <section aria-labelledby="future-dna-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Extrapolated DNA</p>
+        <h2 id="future-dna-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           Extrapolated Internet DNA
         </h2>
         <DnaBarsCompare
@@ -176,8 +178,9 @@ async function FutureBody({
       </section>
 
       {/* grounding: what was actually measured */}
-      <section aria-labelledby="grounding-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="grounding-heading" className="text-lg font-semibold mb-4">
+      <section aria-labelledby="grounding-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Grounding</p>
+        <h2 id="grounding-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           What the extrapolation is built on
         </h2>
         {result.trendGrounding.length > 0 ? (
@@ -201,9 +204,10 @@ async function FutureBody({
       </section>
 
       {/* assumptions (plan §49) */}
-      <section aria-labelledby="assumptions-heading" className="rounded-xl border border-line bg-panel p-5 sm:p-6">
-        <h2 id="assumptions-heading" className="text-lg font-semibold mb-4">
-          Assumptions — if any of these is wrong, this future is wrong
+      <section aria-labelledby="assumptions-heading" className="glass rounded-xl p-5 sm:p-6">
+        <p className="eyebrow">Assumptions</p>
+        <h2 id="assumptions-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          If any of these is wrong, this future is wrong
         </h2>
         <ul className="space-y-2.5 text-sm text-mist leading-relaxed">
           {result.assumptions.map((a, i) => (
@@ -218,19 +222,19 @@ async function FutureBody({
       <div className="flex flex-wrap gap-3">
         <Link
           href={`/entity/${domain}/future`}
-          className="rounded-lg border border-line px-4 py-2.5 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2.5 text-sm font-semibold"
         >
           Try another scenario
         </Link>
         <Link
           href={`/entity/${domain}/evolution`}
-          className="rounded-lg border border-line px-4 py-2.5 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2.5 text-sm font-semibold"
         >
           See the real history this is built on →
         </Link>
         <Link
           href={`/entity/${domain}/lab`}
-          className="rounded-lg border border-line px-4 py-2.5 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+          className="btn-ghost px-4 py-2.5 text-sm font-semibold"
         >
           Run a transformation instead ⚗
         </Link>
@@ -242,7 +246,7 @@ async function FutureBody({
 function FutureSkeleton() {
   return (
     <div className="space-y-6" role="status" aria-live="polite">
-      <div className="h-24 rounded-xl border border-line bg-panel animate-pulse-soft" />
+      <div className="h-24 glass rounded-xl animate-pulse-soft" />
       <p className="text-center text-sm text-mist">
         Loading the site&apos;s measured history to extrapolate from…
       </p>
@@ -283,7 +287,7 @@ export default async function FuturePage({
         <p className="mt-3 text-mist">{validation.error}</p>
         <Link
           href="/"
-          className="mt-6 inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink"
+          className="btn-primary mt-6 px-5 py-2.5 text-sm"
         >
           Back to search
         </Link>
@@ -297,7 +301,7 @@ export default async function FuturePage({
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
       <header className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Future Mode</p>
+        <p className="eyebrow eyebrow-accent">Future Mode</p>
         <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
           Where might {domain} go next?
         </h1>

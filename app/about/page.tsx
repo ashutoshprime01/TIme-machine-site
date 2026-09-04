@@ -61,7 +61,8 @@ const SECTIONS = [
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12">
-      <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+      <p className="eyebrow eyebrow-accent">Methodology</p>
+      <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
         Methodology &amp; sources
       </h1>
       <p className="mt-3 text-mist">
@@ -83,7 +84,7 @@ export default function AboutPage() {
         ))}
       </div>
 
-      <p className="mt-12 rounded-xl border border-line bg-panel p-5 text-sm text-faint">
+      <p className="mt-12 glass rounded-xl p-5 text-sm text-faint">
         Note: this project is built around lawful use of public archive
         services and their terms. Exact legal obligations depend on
         jurisdiction and scale — obtain professional legal advice before

@@ -32,26 +32,40 @@ export function SearchBar({
       <label htmlFor="site-search" className="sr-only">
         Search a website, company, product, or URL
       </label>
-      <input
-        id="site-search"
-        type="search"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Search a website, company, product, or URL…"
-        autoComplete="off"
-        spellCheck={false}
-        className={`flex-1 rounded-lg border border-line bg-panel text-fog placeholder:text-faint focus:border-amber-bright ${
-          large ? "px-5 py-4 text-base sm:text-lg" : "px-4 py-2.5 text-sm"
+      <div
+        className={`group relative flex-1 rounded-xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-all duration-300 focus-within:border-amber-bright/50 focus-within:bg-white/[0.06] focus-within:shadow-[0_0_30px_-6px_rgba(232,180,90,0.25)] ${
+          large ? "" : "text-sm"
         }`}
-      />
+      >
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 font-mono text-faint text-sm tracking-wider group-focus-within:text-amber-bright transition-colors"
+        >
+          ⇢
+        </span>
+        <input
+          id="site-search"
+          type="search"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Search a website, company, product, or URL…"
+          autoComplete="off"
+          spellCheck={false}
+          className={`w-full bg-transparent text-fog placeholder:text-faint outline-none ${
+            large
+              ? "pl-10 sm:pl-11 pr-4 py-4 text-base sm:text-lg"
+              : "pl-9 pr-3 py-2.5 text-sm"
+          }`}
+        />
+      </div>
       <button
         type="submit"
         disabled={pending || !value.trim()}
-        className={`rounded-lg bg-amber text-ink font-semibold hover:bg-amber-bright transition-colors disabled:opacity-50 ${
-          large ? "px-6 py-4 text-base" : "px-4 py-2.5 text-sm"
+        className={`btn-primary font-mono tracking-wider uppercase disabled:opacity-50 disabled:shadow-none ${
+          large ? "px-7 py-4 text-sm" : "px-5 py-2.5 text-xs"
         }`}
       >
-        {pending ? "Searching…" : "Travel"}
+        {pending ? "…" : "Travel"}
       </button>
     </form>
   );

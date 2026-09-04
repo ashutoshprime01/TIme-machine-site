@@ -10,7 +10,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="mt-8 inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink hover:bg-amber-bright transition-colors"
+        className="btn-primary mt-8 px-5 py-2.5 text-sm"
       >
         Back to the time machine
       </Link>

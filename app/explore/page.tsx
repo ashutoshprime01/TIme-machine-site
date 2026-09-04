@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 function Empty({ text }: { text: string }) {
   return (
-    <div className="rounded-xl border border-line bg-panel p-6 text-sm text-mist">
+    <div className="glass rounded-xl p-6 text-sm text-mist">
       {text}
     </div>
   );
@@ -71,7 +71,7 @@ export default async function ExplorePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 space-y-12">
       <header>
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Discovery</p>
+        <p className="eyebrow eyebrow-accent">Discovery</p>
         <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
           What the community has been exploring
         </h1>
@@ -88,7 +88,7 @@ export default async function ExplorePage() {
       {/* Most dramatic detected changes */}
       {dramatic.length > 0 && (
         <section aria-labelledby="dramatic-heading">
-          <h2 id="dramatic-heading" className="text-lg font-semibold">
+          <h2 id="dramatic-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
             Most dramatic detected changes
           </h2>
           <p className="mt-1 text-xs text-faint">
@@ -101,7 +101,7 @@ export default async function ExplorePage() {
               <li key={e.id}>
                 <Link
                   href={`/entity/${e.entity.domain}/compare?a=${e.snapshotA}&b=${e.snapshotB}`}
-                  className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
+                  className="block glass rounded-xl p-4 card-hover"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span className="font-semibold truncate">{e.entity.domain}</span>
@@ -128,7 +128,7 @@ export default async function ExplorePage() {
       {/* Oldest websites explored */}
       {oldest.length > 0 && (
         <section aria-labelledby="oldest-heading">
-          <h2 id="oldest-heading" className="text-lg font-semibold">
+          <h2 id="oldest-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
             Oldest websites explored
           </h2>
           <p className="mt-1 text-xs text-faint">
@@ -140,7 +140,7 @@ export default async function ExplorePage() {
               <li key={entity.id}>
                 <Link
                   href={`/entity/${entity.domain}`}
-                  className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
+                  className="block glass rounded-xl p-4 card-hover"
                 >
                   <div className="font-semibold truncate">{entity.domain}</div>
                   <div className="mt-1 text-sm text-amber-bright tabular-nums">
@@ -156,7 +156,7 @@ export default async function ExplorePage() {
       {/* Most minimal sites */}
       {minimal.length > 0 && (
         <section aria-labelledby="minimal-heading">
-          <h2 id="minimal-heading" className="text-lg font-semibold">
+          <h2 id="minimal-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
             Most minimal sites
           </h2>
           <p className="mt-1 text-xs text-faint">
@@ -169,7 +169,7 @@ export default async function ExplorePage() {
               <li key={d.id}>
                 <Link
                   href={`/entity/${d.analysis.snapshot.entity.domain}/snapshot/${d.analysis.snapshot.timestamp}`}
-                  className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
+                  className="block glass rounded-xl p-4 card-hover"
                 >
                   <div className="font-semibold truncate">
                     {d.analysis.snapshot.entity.domain}
@@ -194,7 +194,7 @@ export default async function ExplorePage() {
       <div className="grid gap-12 lg:grid-cols-2">
         {recentShares.length > 0 && (
           <section aria-labelledby="shares-heading">
-            <h2 id="shares-heading" className="text-lg font-semibold">
+            <h2 id="shares-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
               Recently shared comparisons
             </h2>
             <p className="mt-1 text-xs text-faint">Newest first — creation order, nothing else.</p>
@@ -203,7 +203,7 @@ export default async function ExplorePage() {
                 <li key={s.id}>
                   <Link
                     href={`/share/${s.slug}`}
-                    className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
+                    className="block glass rounded-xl p-4 card-hover"
                   >
                     <div className="font-semibold">
                       {s.domain} · {s.timestampA.slice(0, 4)} vs {s.timestampB.slice(0, 4)}
@@ -218,7 +218,7 @@ export default async function ExplorePage() {
 
         {recentExperiments.length > 0 && (
           <section aria-labelledby="experiments-heading">
-            <h2 id="experiments-heading" className="text-lg font-semibold">
+            <h2 id="experiments-heading" className="text-xl sm:text-2xl font-bold tracking-tight">
               Recent Evolution Lab experiments
             </h2>
             <p className="mt-1 text-xs text-faint">
@@ -231,7 +231,7 @@ export default async function ExplorePage() {
                 <li key={x.id}>
                   <Link
                     href={`/share/lab/${x.domain}/${x.timestamp}/${x.mode}`}
-                    className="block rounded-xl border border-line bg-panel p-4 hover:border-amber/50 hover:bg-raised transition-colors"
+                    className="block glass rounded-xl p-4 card-hover"
                   >
                     <div className="font-semibold">
                       {x.domain} · {getLabMode(x.mode)?.label ?? x.mode}

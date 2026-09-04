@@ -38,7 +38,7 @@ export default async function SearchPage({
             <Link
               key={s}
               href={`/entity/${s}`}
-              className="rounded-full border border-line bg-panel px-3 py-1.5 text-sm text-mist hover:text-fog hover:border-faint transition-colors"
+              className="chip-poly !text-sm !normal-case !tracking-normal !px-3 !py-1.5"
             >
               {s}
             </Link>

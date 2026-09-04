@@ -76,10 +76,10 @@ function EventCard({ event }: { event: HistoryEvent }) {
         aria-hidden="true"
         className="absolute left-2 sm:left-3 top-1.5 w-3 h-3 rounded-full bg-amber ring-4 ring-ink"
       />
-      <div className="rounded-xl border border-line bg-panel p-5">
+      <div className="glass rounded-xl p-5 card-hover">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <span className="text-lg font-bold tabular-nums text-amber-bright">{event.year}</span>
-          <span className="rounded-full border border-line px-2.5 py-0.5 text-xs text-mist">
+          <span className="chip-poly">
             {CATEGORY_LABELS[event.category]}
           </span>
         </div>
@@ -92,7 +92,7 @@ function EventCard({ event }: { event: HistoryEvent }) {
                 key={e.domain}
                 href={`/entity/${e.domain}`}
                 title={e.note}
-                className="rounded-lg border border-line bg-raised px-3.5 py-2 text-sm text-mist hover:text-fog hover:border-amber/50 transition-colors"
+                className="chip-poly !text-sm !normal-case !tracking-normal"
               >
                 Travel to {e.domain} <span aria-hidden="true">⇗</span>
                 <span className="sr-only"> — {e.note}</span>
@@ -112,7 +112,7 @@ export default async function HistoryPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10 space-y-14">
       <header>
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Global history</p>
+        <p className="eyebrow eyebrow-accent">Global history</p>
         <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
           History of the Internet
         </h1>
@@ -153,7 +153,7 @@ export default async function HistoryPage() {
         </p>
 
         {technologies.length === 0 ? (
-          <div className="mt-4 rounded-xl border border-line bg-panel p-6 text-sm text-mist">
+          <div className="mt-4 glass rounded-xl p-6 text-sm text-mist">
             Nothing measured yet — explore a website ({" "}
             <Link href="/entity/info.cern.ch" className="text-amber-bright hover:underline">
               try the first website
@@ -161,7 +161,7 @@ export default async function HistoryPage() {
             ) and its detected technologies will appear here.
           </div>
         ) : (
-          <div className="mt-4 overflow-x-auto rounded-xl border border-line bg-panel p-5">
+          <div className="mt-4 glass rounded-xl p-5">
             <table className="w-full min-w-160 text-left text-sm">
               <thead>
                 <tr className="text-xs text-faint">
@@ -209,7 +209,7 @@ export default async function HistoryPage() {
         )}
       </section>
 
-      <footer className="rounded-xl border border-line bg-panel p-5 text-xs leading-relaxed text-faint">
+      <footer className="glass rounded-xl p-5 text-xs leading-relaxed text-faint">
         <p>
           The curated timeline is the public historical record (dataset v
           {HISTORY_VERSION}) — dates and events as widely documented by their

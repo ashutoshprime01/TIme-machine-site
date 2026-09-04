@@ -101,7 +101,7 @@ export function CompareTool({
             which === "b" ? e.target.value : data.captureB.timestamp
           )
         }
-        className="rounded-md border border-line bg-panel px-2.5 py-1.5 text-fog max-w-56"
+        className="rounded-md border border-line bg-raised px-2.5 py-1.5 text-fog max-w-56"
       >
         {grouped.map(([year, list]) => (
           <optgroup key={year} label={year}>

@@ -38,7 +38,7 @@ async function EvolutionBody({ domain }: { domain: string }) {
 
   if (report.points.length === 0) {
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-4">
+      <div className="glass rounded-xl p-8 text-center space-y-4">
         <h2 className="text-lg font-semibold">Not enough history to analyze yet</h2>
         <p className="text-sm text-mist">
           We analyze one archived page per year. For {domain}, either no year could
@@ -46,7 +46,7 @@ async function EvolutionBody({ domain }: { domain: string }) {
         </p>
         <Link
           href={`/entity/${domain}`}
-          className="inline-block rounded-lg border border-line px-4 py-2 text-sm text-mist hover:text-fog"
+          className="btn-ghost px-4 py-2 text-sm font-semibold"
         >
           Back to the timeline
         </Link>
@@ -57,7 +57,7 @@ async function EvolutionBody({ domain }: { domain: string }) {
   if (report.points.length === 1) {
     const only = report.points[0];
     return (
-      <div className="rounded-xl border border-line bg-panel p-8 text-center space-y-4">
+      <div className="glass rounded-xl p-8 text-center space-y-4">
         <h2 className="text-lg font-semibold">Only one year of history so far</h2>
         <p className="text-sm text-mist">
           Evolution needs at least two years to compare. {domain} has analyzable
@@ -65,7 +65,7 @@ async function EvolutionBody({ domain }: { domain: string }) {
         </p>
         <Link
           href={`/entity/${domain}/snapshot/${only.timestamp}`}
-          className="inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink"
+          className="btn-primary px-5 py-2.5 text-sm"
         >
           View the {only.year} snapshot
         </Link>
@@ -92,15 +92,16 @@ async function EvolutionBody({ domain }: { domain: string }) {
 
       {/* evolution score (plan §18) */}
       <section aria-labelledby="score-heading">
-        <h2 id="score-heading" className="text-lg font-semibold mb-4">
-          Evolution score
+        <p className="eyebrow">Evolution score</p>
+        <h2 id="score-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          How much it changed overall
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-amber/40 bg-amber/10 px-4 py-3">
-            <dd className="text-2xl font-bold tabular-nums text-amber-bright">
+          <div className="glass rounded-xl px-4 py-3.5 border-amber/40 bg-amber/10 card-hover">
+            <dd className="text-3xl font-bold tabular-nums text-amber-bright">
               {report.overallIndex}
             </dd>
-            <dt className="text-xs text-faint mt-1">
+            <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint mt-1">
               Evolution Index · {first.year} → {last.year}
             </dt>
           </div>
@@ -112,14 +113,14 @@ async function EvolutionBody({ domain }: { domain: string }) {
                 ["Technology change", report.overallComparison.technologyChange],
               ] as Array<[string, number]>
             ).map(([label, value]) => (
-              <div key={label} className="rounded-xl border border-line bg-panel px-4 py-3">
+              <div key={label} className="glass rounded-xl px-4 py-3.5 card-hover">
                 <dd className="text-2xl font-bold tabular-nums">{value}</dd>
-                <dt className="text-xs text-faint mt-1">{label}</dt>
+                <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-faint mt-1">{label}</dt>
               </div>
             ))}
         </div>
         <p className="mt-3 text-xs text-faint">
-          <span className="font-semibold text-mist">INFERENCE</span> — the index
+          <span className="chip chip-inference mr-1.5">INFERENCE</span> the index
           combines measured content, structure, navigation and technology deltas
           between {first.year} and {last.year} into one 0–100 score. The
           measurements are facts; the single number is an interpretation.
@@ -128,14 +129,15 @@ async function EvolutionBody({ domain }: { domain: string }) {
 
       {/* cross-year chart (plan §46) */}
       <section aria-labelledby="chart-heading">
-        <h2 id="chart-heading" className="text-lg font-semibold mb-4">
+        <p className="eyebrow">Year by year</p>
+        <h2 id="chart-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
           How it changed, year by year
         </h2>
-        <div className="rounded-xl border border-line bg-panel p-4 sm:p-6">
+        <div className="glass rounded-xl p-4 sm:p-6">
           <EvolutionChart points={chartPoints} />
         </div>
         <p className="mt-3 text-xs text-faint">
-          <span className="font-semibold text-mist">FACT</span> — values are
+          <span className="chip chip-fact mr-1.5">FACT</span> values are
           deterministic counts from one archived page per year (the capture
           closest to July 1), measured by Analysis v1.0.
         </p>
@@ -143,11 +145,12 @@ async function EvolutionBody({ domain }: { domain: string }) {
 
       {/* detected events (plan §19) */}
       <section aria-labelledby="events-heading">
-        <h2 id="events-heading" className="text-lg font-semibold mb-4">
-          Detected events
+        <p className="eyebrow">Detected events</p>
+        <h2 id="events-heading" className="text-xl sm:text-2xl font-bold tracking-tight mb-5">
+          When the site shifted
         </h2>
         {report.events.length === 0 ? (
-          <div className="rounded-xl border border-line bg-panel p-6 text-sm text-mist">
+          <div className="glass rounded-xl p-6 text-sm text-mist">
             No major year-over-year changes crossed our detection threshold
             during this period. The site changed gradually rather than in
             dramatic steps.
@@ -157,19 +160,15 @@ async function EvolutionBody({ domain }: { domain: string }) {
             {report.events.map((e) => (
               <li
                 key={`${e.timestampA}-${e.timestampB}-${e.type}`}
-                className="rounded-xl border border-line bg-panel p-5"
+                className="glass rounded-xl p-5 card-hover"
               >
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <span className="font-semibold tabular-nums">
+                  <span className="font-mono font-semibold tabular-nums text-lg">
                     {e.yearA} → {e.yearB}
                   </span>
-                  <span className="rounded-full border border-amber/40 bg-amber/10 px-2.5 py-0.5 text-xs font-medium text-amber-bright">
-                    {TYPE_LABELS[e.type]}
-                  </span>
-                  <span className="rounded-full border border-line px-2.5 py-0.5 text-xs text-mist">
-                    {e.confidence} confidence
-                  </span>
-                  <span className="ml-auto text-xs text-faint tabular-nums">
+                  <span className="chip chip-hypothesis">{TYPE_LABELS[e.type]}</span>
+                  <span className="chip chip-inference">{e.confidence} confidence</span>
+                  <span className="ml-auto font-mono text-xs text-faint tabular-nums">
                     magnitude {e.magnitude}/100
                   </span>
                 </div>
@@ -188,13 +187,7 @@ async function EvolutionBody({ domain }: { domain: string }) {
                 <ul className="mt-4 space-y-1.5 text-sm">
                   {e.changes.slice(0, 4).map((c, i) => (
                     <li key={i} className="flex gap-2">
-                      <span
-                        className={`mt-0.5 shrink-0 rounded border px-1.5 py-px text-[10px] font-semibold tracking-wide ${
-                          c.status === "FACT"
-                            ? "border-azure/50 text-azure"
-                            : "border-line text-faint"
-                        }`}
-                      >
+                      <span className={`chip mt-0.5 shrink-0 ${c.status === "FACT" ? "chip-fact" : "chip-inference"}`}>
                         {c.status}
                       </span>
                       <span className="text-mist">{c.text}</span>
@@ -204,16 +197,17 @@ async function EvolutionBody({ domain }: { domain: string }) {
 
                 <Link
                   href={`/entity/${domain}/compare?a=${e.timestampA}&b=${e.timestampB}`}
-                  className="mt-4 inline-block text-sm font-medium text-amber-bright hover:underline"
+                  className="mt-4 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.15em] text-amber-bright hover:underline"
                 >
-                  Compare {e.yearA} vs {e.yearB} →
+                  Compare {e.yearA} vs {e.yearB}
+                  <span aria-hidden="true">→</span>
                 </Link>
               </li>
             ))}
           </ol>
         )}
         <p className="mt-3 text-xs text-faint">
-          <span className="font-semibold text-mist">INFERENCE</span> — an event is
+          <span className="chip chip-inference mr-1.5">INFERENCE</span> an event is
           flagged when a change dimension between two consecutive years crosses a
           fixed threshold (35/100). We call these &ldquo;detected changes&rdquo;,
           not redesigns: the underlying measurements are facts, the event
@@ -222,15 +216,17 @@ async function EvolutionBody({ domain }: { domain: string }) {
       </section>
 
       {/* methodology */}
-      <footer className="rounded-xl border border-line bg-panel p-5 text-xs leading-relaxed text-faint">
+      <footer className="glass rounded-xl p-5 text-xs leading-relaxed text-faint">
         <p>
-          Method: one archived capture per year (closest to July 1) is fetched
+          <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">Method</span>
+          <br />
+          One archived capture per year (closest to July 1) is fetched
           from {`${domain}`}
           &apos;s archive history and analyzed deterministically (Analysis v1.0,
           DNA v1.0). Adjacent years are compared on content, structure,
           navigation and technology. All results are reproducible — the same
           snapshots always produce the same scores.{" "}
-          <Link href="/about" className="text-mist underline hover:text-fog">
+          <Link href="/about" className="text-mist underline underline-offset-2 hover:text-fog">
             Read the full methodology
           </Link>
           .
@@ -245,7 +241,7 @@ function EvolutionSkeleton() {
     <div className="space-y-6" role="status" aria-live="polite">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-16 rounded-xl border border-line bg-panel animate-pulse-soft" />
+          <div key={i} className="h-16 glass rounded-xl animate-pulse-soft" />
         ))}
       </div>
       <p className="text-center text-sm text-mist">
@@ -285,7 +281,7 @@ export default async function EvolutionPage({
         <p className="mt-3 text-mist">{validation.error}</p>
         <Link
           href="/"
-          className="mt-6 inline-block rounded-lg bg-amber px-5 py-2.5 text-sm font-semibold text-ink"
+          className="btn-primary mt-6 px-5 py-2.5 text-sm"
         >
           Back to search
         </Link>
@@ -294,25 +290,28 @@ export default async function EvolutionPage({
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
-      <header className="mb-8">
-        <p className="text-xs uppercase tracking-[0.2em] text-faint">Evolution</p>
-        <h1 className="mt-1 text-3xl sm:text-4xl font-bold tracking-tight">
-          How {domain} evolved
+    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
+      <header className="mb-10">
+        <p className="eyebrow eyebrow-accent">Evolution</p>
+        <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight">
+          How {domain}{" "}
+          <span className="font-light italic text-fog/80">evolved</span>
         </h1>
-        <Link
-          href={`/entity/${domain}`}
-          className="mt-2 inline-block text-sm text-mist hover:text-fog"
-        >
-          ← Timeline
-        </Link>
-        <span className="ml-3 text-faint" aria-hidden="true">·</span>
-        <Link
-          href={`/entity/${domain}/lab`}
-          className="mt-2 ml-2 inline-block text-sm text-amber-bright hover:underline"
-        >
-          Run a hypothetical transformation in the Evolution Lab →
-        </Link>
+        <div className="mt-3 flex items-center flex-wrap gap-x-3 gap-y-2">
+          <Link
+            href={`/entity/${domain}`}
+            className="font-mono text-xs uppercase tracking-[0.15em] text-mist hover:text-fog transition-colors"
+          >
+            ← Timeline
+          </Link>
+          <span className="text-faint" aria-hidden="true">·</span>
+          <Link
+            href={`/entity/${domain}/lab`}
+            className="font-mono text-xs uppercase tracking-[0.15em] text-amber-bright hover:underline"
+          >
+            Run a hypothetical transformation in the Evolution Lab →
+          </Link>
+        </div>
       </header>
       <Suspense fallback={<EvolutionSkeleton />}>
         <EvolutionBody domain={domain} />
