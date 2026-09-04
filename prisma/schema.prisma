@@ -12,13 +12,14 @@ datasource db {
 }
 
 model Entity {
-  id             String     @id @default(cuid())
-  domain         String     @unique
+  id             String         @id @default(cuid())
+  domain         String         @unique
   name           String?
   firstCaptureAt String? // CDX timestamp YYYYMMDDhhmmss
   lastCaptureAt  String? // CDX timestamp YYYYMMDDhhmmss
-  createdAt      DateTime   @default(now())
+  createdAt      DateTime       @default(now())
   snapshots      Snapshot[]
+  events         TimelineEvent[]
 }
 
 model Snapshot {
@@ -93,6 +94,22 @@ model Dna {
   algorithmVersion     String
 
   @@index([analysisId])
+}
+
+model TimelineEvent {
+  id         String   @id @default(cuid())
+  entity     Entity   @relation(fields: [entityId], references: [id])
+  entityId   String
+  snapshotA  String // CDX timestamp of the earlier capture
+  snapshotB  String // CDX timestamp of the later capture
+  type       String // content | structure | navigation | technology
+  confidence String // high | medium
+  magnitude  Int // dominant change dimension, 0–100
+  evidence   String // JSON: dimension scores + detected changes
+  createdAt  DateTime @default(now())
+
+  @@unique([entityId, snapshotA, snapshotB, type])
+  @@index([entityId])
 }
 
 model Share {

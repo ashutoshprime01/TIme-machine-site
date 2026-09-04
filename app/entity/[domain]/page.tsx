@@ -119,6 +119,12 @@ async function EntityBody({ domain }: { domain: string }) {
         >
           Compare {first.timestamp.slice(0, 4)} vs {latest.timestamp.slice(0, 4)}
         </Link>
+        <Link
+          href={`/entity/${domain}/evolution`}
+          className="rounded-lg border border-line px-5 py-2.5 text-sm font-semibold text-mist hover:text-fog hover:border-amber/50 transition-colors"
+        >
+          Evolution report ↗
+        </Link>
       </div>
 
       {/* timeline */}

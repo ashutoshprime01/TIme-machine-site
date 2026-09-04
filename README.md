@@ -21,12 +21,13 @@ Snapshot → Compare → Basic Internet DNA → Shareable URL.
 | Deterministic analysis (§13, §27) | ✅ content/structure/design metrics + tech fingerprinting |
 | Internet DNA (§15–16) | ✅ 12 dimensions, versioned formulas, heuristic-labeled |
 | Comparison mode (§12) | ✅ side-by-side, slider, change meters, detected changes (FACT/INFERENCE) |
+| Evolution Engine (§17–19, §46) | ✅ per-year sampling, evolution score, detected events, cross-year charts |
 | Sharing (§35) | ✅ `/share/<domain>-<yearA>-vs-<yearB>-<id>` with OG metadata |
 | Security (§33) | ✅ SSRF guards, sandbox isolation, input sanitization, rate limiting |
 | Caching (§30) | ✅ content-hash reuse, two-layer cache (memory + disk) |
 | Data model (§28) | ✅ Entity / Snapshot / Analysis / Dna / Share with indexes |
 
-Not yet (per plan phases): evolution events & scores, Evolution Lab,
+Not yet (per plan phases): Evolution Lab,
 counterfactuals, future scenarios, accounts, collections, discovery.
 
 ## Getting started
