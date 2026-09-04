@@ -6,18 +6,28 @@ import { useState, useTransition, type FormEvent } from "react";
 export function SearchBar({
   initialValue = "",
   size = "large",
+  onTravel,
 }: {
   initialValue?: string;
   size?: "large" | "compact";
+  /** When provided, submit is handed to the parent (e.g. the hero's
+      time-travel portal) instead of navigating directly. */
+  onTravel?: (query: string) => void;
 }) {
   const [value, setValue] = useState(initialValue);
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [traveling, setTraveling] = useState(false);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     const q = value.trim();
     if (!q) return;
+    if (onTravel) {
+      setTraveling(true);
+      onTravel(q);
+      return;
+    }
     startTransition(() => router.push(`/search?q=${encodeURIComponent(q)}`));
   }
 
@@ -60,12 +70,12 @@ export function SearchBar({
       </div>
       <button
         type="submit"
-        disabled={pending || !value.trim()}
+        disabled={pending || traveling || !value.trim()}
         className={`btn-primary font-mono tracking-wider uppercase disabled:opacity-50 disabled:shadow-none ${
           large ? "px-7 py-4 text-sm" : "px-5 py-2.5 text-xs"
         }`}
       >
-        {pending ? "…" : "Travel"}
+        {pending || traveling ? "…" : "Travel"}
       </button>
     </form>
   );

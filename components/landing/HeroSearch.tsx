@@ -7,7 +7,9 @@
 // instant mounts.
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { SearchBar } from "@/components/SearchBar";
 
 /** Verified popular entities — archive coverage years, widely
@@ -25,6 +27,24 @@ const ENTITIES = [
 
 export function HeroSearch() {
   const reduced = useReducedMotion();
+  const router = useRouter();
+  // when set, the search field has become a departure portal for this query
+  const [portal, setPortal] = useState<string | null>(null);
+
+  // submit → the field transforms into a time-travel portal (rings
+  // ripple out of the slab, it brightens, the button charges), then
+  // navigation happens mid-glow. Reduced motion: navigate immediately.
+  const handleTravel = useCallback(
+    (q: string) => {
+      if (reduced) {
+        router.push(`/search?q=${encodeURIComponent(q)}`);
+        return;
+      }
+      setPortal(q);
+      setTimeout(() => router.push(`/search?q=${encodeURIComponent(q)}`), 900);
+    },
+    [reduced, router]
+  );
 
   const chipVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -45,17 +65,55 @@ export function HeroSearch() {
   return (
     <div className="mx-auto w-full max-w-2xl">
       {/* search: high-contrast glass slab over the archive backdrop —
-          the SearchBar itself carries the amber focus glow */}
+          the SearchBar itself carries the amber focus glow; on submit
+          it becomes a departure portal */}
       <motion.div
         initial={reduced ? false : { opacity: 0, y: 26, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        animate={reduced ? undefined : { opacity: 1, y: 0, scale: 1 }}
         transition={
           reduced
             ? { duration: 0 }
             : { type: "spring", stiffness: 220, damping: 26, delay: 0.15 }
         }
+        className="relative"
       >
-        <SearchBar />
+        {/* portal rings: two amber rings ripple out of the slab when a
+            journey departs */}
+        <AnimatePresence>
+          {portal && (
+            <>
+              {[0, 1].map((ring) => (
+                <motion.span
+                  key={ring}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 rounded-2xl border border-amber-bright/70"
+                  initial={{ opacity: 0.9, scale: 1 }}
+                  animate={{ opacity: 0, scale: 1.35 + ring * 0.3 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: 0.9,
+                    delay: ring * 0.18,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                />
+              ))}
+              {/* the slab itself brightens as the portal opens */}
+              <motion.span
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-3 rounded-3xl"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.35 }}
+                style={{
+                  background:
+                    "radial-gradient(60% 100% at 50% 50%, rgba(232,180,90,0.22), transparent 75%)",
+                }}
+              />
+            </>
+          )}
+        </AnimatePresence>
+        <SearchBar onTravel={handleTravel} />
       </motion.div>
 
       {/* verified entity presets */}

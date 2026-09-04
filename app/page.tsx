@@ -3,6 +3,12 @@ import type { Metadata } from "next";
 import { Marquee } from "@/components/ui/Marquee";
 import { ArchiveBackdrop } from "@/components/landing/ArchiveBackdrop";
 import { HeroSearch } from "@/components/landing/HeroSearch";
+import { Pipeline } from "@/components/landing/Pipeline";
+import { DestinationCards } from "@/components/landing/DestinationCards";
+import { YearRail } from "@/components/landing/YearRail";
+import { DnaMorph } from "@/components/landing/DnaMorph";
+import { Reveal } from "@/components/motion/Reveal";
+import { Magnetic } from "@/components/motion/Magnetic";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -12,64 +18,6 @@ const ARSENAL = [
   "Wayback CDX", "Deterministic Analysis", "Internet DNA", "Evolution Engine",
   "Change Detection", "Tech Fingerprinting", "Evolution Lab", "Future Simulator",
   "Sandboxed Viewer", "Content-Hash Caching", "FACT / INFERENCE", "Zero Paid APIs",
-];
-
-const ACTIONS = [
-  {
-    num: "01",
-    title: "Explore History",
-    description:
-      "Pick a website, pick a year, and see the real archived page — from the 1990s to today.",
-    href: `/entity/google.com`,
-    cta: "See Google through time",
-  },
-  {
-    num: "02",
-    title: "Compare Eras",
-    description:
-      "Put two eras side by side, wipe between them with a slider, and get a shareable link.",
-    href: `/entity/youtube.com/compare`,
-    cta: "Compare YouTube eras",
-  },
-  {
-    num: "03",
-    title: "Measure Evolution",
-    description:
-      "Internet DNA, detected change events, cross-year charts — every claim deterministic and labeled.",
-    href: `/entity/apple.com/evolution`,
-    cta: "Run an evolution report",
-  },
-  {
-    num: "04",
-    title: "Hypothesize",
-    description:
-      "Run deterministic what-if transformations in the Evolution Lab, or extrapolate measured trends to 2040.",
-    href: `/entity/wikipedia.org/lab`,
-    cta: "Open the Evolution Lab",
-  },
-];
-
-const STEPS = [
-  {
-    step: "01",
-    title: "Archive",
-    text: "Public web archives hold decades of captures. We fetch only what you ask for.",
-  },
-  {
-    step: "02",
-    title: "Analyze",
-    text: "Deterministic HTML analysis counts words, links, images, structure and technology signals.",
-  },
-  {
-    step: "03",
-    title: "Visualize",
-    text: "Timelines, side-by-side comparisons, sliders and change meters make evolution visible.",
-  },
-  {
-    step: "04",
-    title: "Evolve",
-    text: "Internet DNA profiles quantify each era. Deeper evolution tools grow from this evidence.",
-  },
 ];
 
 function SectionHeading({
@@ -138,79 +86,89 @@ export default function HomePage() {
 
       {/* How it works — the architectural principle (plan §0) */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
-        <SectionHeading
-          eyebrow="01 — The Principle"
-          title={
-            <>
-              Archive <span className="text-amber-bright">→</span> Analyze{" "}
-              <span className="text-amber-bright">→</span> Visualize{" "}
-              <span className="text-amber-bright">→</span> Evolve
-            </>
-          }
-          description="Real snapshots are the raw material. The product is the understanding of change — measured deterministically, never guessed, and never dependent on paid AI."
-        />
-        <ol className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger">
-          {STEPS.map((s) => (
-            <li key={s.step} className="glass rounded-xl p-5 card-hover">
-              <div className="font-mono text-xs font-semibold tabular-nums text-amber-bright tracking-[0.2em]">
-                {s.step}
-              </div>
-              <h3 className="mt-3 font-semibold text-lg">{s.title}</h3>
-              <p className="mt-2 text-sm text-mist leading-relaxed">{s.text}</p>
-            </li>
-          ))}
-        </ol>
+        <Reveal>
+          <SectionHeading
+            eyebrow="01 — The Principle"
+            title={
+              <>
+                Archive <span className="text-amber-bright">→</span> Analyze{" "}
+                <span className="text-amber-bright">→</span> Visualize{" "}
+                <span className="text-amber-bright">→</span> Evolve
+              </>
+            }
+            description="Real snapshots are the raw material. The product is the understanding of change — measured deterministically, never guessed, and never dependent on paid AI."
+          />
+        </Reveal>
+        <Pipeline />
       </section>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6"><div className="hairline" /></div>
 
       {/* Main actions (plan §7) */}
       <section id="explore" className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
-        <SectionHeading
-          eyebrow="02 — Destinations"
-          title="What would you like to explore?"
-        />
-        <div className="mt-10 grid gap-4 md:grid-cols-2">
-          {ACTIONS.map((a) => (
-            <Link
-              key={a.num}
-              href={a.href}
-              className="group glass rounded-xl p-6 sm:p-7 card-hover"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <span className="font-mono text-xs tabular-nums text-faint tracking-[0.2em]">
-                  {a.num}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="w-px h-8 bg-gradient-to-b from-white/40 group-hover:from-amber-bright to-transparent transition-colors"
-                />
-              </div>
-              <h3 className="mt-4 font-semibold text-xl group-hover:text-amber-bright transition-colors">
-                {a.title}
-              </h3>
-              <p className="mt-2 text-sm text-mist leading-relaxed">{a.description}</p>
-              <span className="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.15em] text-amber-bright">
-                {a.cta}
-                <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">→</span>
-              </span>
-            </Link>
-          ))}
-        </div>
+        <Reveal>
+          <SectionHeading
+            eyebrow="02 — Destinations"
+            title="What would you like to explore?"
+          />
+        </Reveal>
+        <DestinationCards />
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6"><div className="hairline" /></div>
+
+      {/* The timeline itself, as an exhibit */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="03 — The Timeline"
+            title={
+              <>
+                Thirty-five years,{" "}
+                <span className="font-light italic text-fog/80">under your thumb</span>
+              </>
+            }
+            description="Drag through the decades — the year under the marker grows dominant, the rest recede into the dark. Release, and the rail settles onto the era you chose."
+          />
+        </Reveal>
+        <Reveal delay={0.1} className="mt-6">
+          <YearRail />
+        </Reveal>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4 sm:px-6"><div className="hairline" /></div>
+
+      {/* Internet DNA */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
+        <Reveal>
+          <SectionHeading
+            eyebrow="04 — Internet DNA"
+            title={
+              <>
+                Every era has{" "}
+                <span className="font-light italic text-fog/80">a shape</span>
+              </>
+            }
+            description="Twelve dimensions — from minimalism to AI integration — profile a website's character. Switch eras and watch the profile morph."
+          />
+        </Reveal>
+        <Reveal delay={0.1} className="mt-6">
+          <DnaMorph />
+        </Reveal>
       </section>
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6"><div className="hairline" /></div>
 
       {/* Honesty note (plan §77) */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 py-20 sm:py-24">
-        <div className="glass rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+        <Reveal className="glass rounded-2xl p-6 sm:p-10 relative overflow-hidden">
           <div
             aria-hidden="true"
             className="orb w-72 h-72 bg-azure/10 -top-24 -right-24"
           />
           <div className="relative">
             <SectionHeading
-              eyebrow="03 — The Honesty Rule"
+              eyebrow="05 — The Honesty Rule"
               title={
                 <>
                   Facts, inferences, and hypotheses —{" "}
@@ -233,13 +191,13 @@ export default function HomePage() {
               is never presented as history.
             </p>
           </div>
-        </div>
+        </Reveal>
       </section>
 
       {/* Final CTA */}
       <section className="relative overflow-hidden border-t border-white/5">
         <div aria-hidden="true" className="absolute inset-0 ambient-wash" />
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-20 text-center">
+        <Reveal className="relative mx-auto max-w-6xl px-4 sm:px-6 py-20 text-center">
           <p className="eyebrow">Ready when you are</p>
           <h2 className="mt-4 text-3xl sm:text-5xl font-bold tracking-tight text-balance">
             Every website has a{" "}
@@ -248,13 +206,15 @@ export default function HomePage() {
           <p className="mx-auto mt-4 max-w-lg text-mist">
             Go find it. Start with the very first website ever published.
           </p>
-          <Link
-            href="/entity/info.cern.ch"
-            className="btn-primary animate-pulse-glow mt-8 px-8 py-3.5 text-sm"
-          >
-            Travel to 1991 →
-          </Link>
-        </div>
+          <Magnetic className="mt-8 inline-block" strength={0.25}>
+            <Link
+              href="/entity/info.cern.ch"
+              className="btn-primary animate-pulse-glow px-8 py-3.5 text-sm"
+            >
+              Travel to 1991 →
+            </Link>
+          </Magnetic>
+        </Reveal>
       </section>
     </div>
   );
